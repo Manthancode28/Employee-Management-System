@@ -6,9 +6,9 @@ A simple Employee Management System built using the MERN stack to register emplo
 
 ## 🚀 Tech Stack
 
-- Frontend: React (Vite) + Tailwind CSS
+- Frontend: React + Tailwind CSS
 - Backend: Node.js + Express.js
-- Database: MongoDB Atlas (Cloud)
+- Database: MongoDB 
 - API Testing: Postman
 
 ---
