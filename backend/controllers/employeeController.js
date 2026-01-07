@@ -1,4 +1,5 @@
 const Employee = require("../models/Employee");
+const bcrypt = require("bcryptjs");
 
 exports.addEmployee = async (req, res) => {
   try {
@@ -13,11 +14,32 @@ exports.addEmployee = async (req, res) => {
       return res.status(400).json({ message: "Employee already exists" });
     }
 
-    const employee = new Employee({ name, email, department, role });
+    // 🔑 STEP 4.1 — DEFAULT PASSWORD
+    const defaultPassword = "123456";
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+    // ✅ create employee WITH password
+    const employee = new Employee({
+      name,
+      email,
+      department,
+      role,
+      password: hashedPassword,
+      organization: req.user.organizationId   // comes from JWT
+    });
+
     await employee.save();
 
-    res.status(201).json({ message: "Employee added successfully" });
+    res.status(201).json({
+      message: "Employee added successfully",
+      tempPassword: defaultPassword // optional (for testing)
+    });
+
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+
