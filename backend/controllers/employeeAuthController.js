@@ -24,3 +24,33 @@ exports.loginEmployee = async (req, res) => {
     token
   });
 };
+
+
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const employee = await Employee.findById(req.user.userId);
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, employee.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password incorrect" });
+    }
+
+    employee.password = await bcrypt.hash(newPassword, 10);
+    await employee.save();
+
+    res.json({ message: "Password changed successfully" });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
