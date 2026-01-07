@@ -4,69 +4,83 @@ A simple Employee Management System built using the MERN stack to register emplo
 
 ---
 
-## 🚀 Tech Stack
+## 📌 Project Overview
 
-- Frontend: React + Tailwind CSS
-- Backend: Node.js + Express.js
-- Database: MongoDB 
-- API Testing: Postman
+The Employee Management System allows organization administrators to:
 
----
+- Register their organization
+- Login securely using JWT authentication
+- Add and manage employees
+- View employee details in a structured manner
 
-## ✨ Features
+Employees can:
 
-- Add new employee details
-- Fields included:
-  - Name
-  - Email
-  - Department (dynamic selection)
-  - Role (dynamic selection)
-- Backend validation and error handling
-- Success and error messages on UI
-- Data securely stored in MongoDB Atlas
-- Responsive and clean user interface
+- Login using provided credentials
+- Access their personalized dashboard
+
+The application follows real-world enterprise standards such as role-based access control and protected routing.
 
 ---
 
-## 🔄 Application Flow
+## 🛠 Technology Stack
 
-1. User fills the employee registration form.
-2. Frontend sends data to backend using REST API.
-3. Backend validates input and checks for duplicates.
-4. Valid data is stored in MongoDB Atlas.
-5. Success or error response is sent back to the frontend.
-6. User receives feedback on the UI.
+- **Frontend:** React.js, Tailwind CSS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Token)
+- **API Communication:** Axios
 
 ---
 
-## 🧪 Testing
+## ✨ Key Features
 
-- Backend APIs tested using Postman
-- Verified scenarios:
-  - Successful employee addition
-  - Missing required fields
-  - Duplicate email entries
+- Role-based authentication and authorization
+- Protected routes for secure access
+- Landing page for role selection (Organization / Employee)
+- Interactive and clean UI
+- Organization registration module
+- Add Employee functionality
+- Employees list view for organization admins
+- Secure session handling using JWT
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-Employee-Management-System/
-├── backend/
-│   ├── models/
-│   ├── routes/
-│   ├── controllers/
-│   └── server.js
+Employee-Management-System
 │
-├── frontend/
-│   ├── src/
-│   ├── components/
-│   └── main.jsx
+├── backend
+│ ├── controllers
+│ ├── models
+│ ├── routes
+│ ├── middleware
+│ └── server.js
 │
-├── .gitignore
+├── frontend
+│ ├── src
+│ │ ├── pages
+│ │ ├── components
+│ │ ├── api
+│ │ ├── App.jsx
+│ │ └── main.jsx
+│
 └── README.md
 ```
+
+---
+
+## 🔐 Authentication Flow
+
+1. User selects role from the landing page
+2. User logs in with valid credentials
+3. JWT token and role are stored securely
+4. Protected routes verify authentication and authorization
+5. User is redirected to the appropriate dashboard
+
+---
+
+
 ## ▶️ How to Run the Project
 ```
 cd backend
