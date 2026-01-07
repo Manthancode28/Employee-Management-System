@@ -41,5 +41,16 @@ exports.addEmployee = async (req, res) => {
 };
 
 
+exports.getEmployees = async (req, res) => {
+  try {
+    const employees = await Employee.find({
+      organization: req.user.organizationId
+    }).select("-password");
+
+    res.json(employees);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 
