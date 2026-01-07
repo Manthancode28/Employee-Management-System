@@ -118,7 +118,7 @@ const Login = () => {
           </button>
         </form>
 
-        {/* REGISTER (ONLY ORG) */}
+        {/* REGISTER */}
         {role === "ORG_ADMIN" && (
           <p className="text-center text-sm text-gray-600 mt-6">
             New organization?{" "}

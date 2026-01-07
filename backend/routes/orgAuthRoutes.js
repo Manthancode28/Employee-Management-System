@@ -6,10 +6,10 @@ const {
   loginOrg
 } = require("../controllers/orgAuthController");
 
-// Register organization
+
 router.post("/register", registerOrg);
 
-// Login organization
+
 router.post("/login", loginOrg);
 
 module.exports = router;

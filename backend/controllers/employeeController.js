@@ -14,25 +14,25 @@ exports.addEmployee = async (req, res) => {
       return res.status(400).json({ message: "Employee already exists" });
     }
 
-    // 🔑 STEP 4.1 — DEFAULT PASSWORD
+    
     const defaultPassword = "123456";
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
-    // ✅ create employee WITH password
+    
     const employee = new Employee({
       name,
       email,
       department,
       role,
       password: hashedPassword,
-      organization: req.user.organizationId   // comes from JWT
+      organization: req.user.organizationId   
     });
 
     await employee.save();
 
     res.status(201).json({
       message: "Employee added successfully",
-      tempPassword: defaultPassword // optional (for testing)
+      tempPassword: defaultPassword 
     });
 
   } catch (error) {
