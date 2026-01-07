@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 const RegisterOrg = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const RegisterOrg = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,15 +27,13 @@ const RegisterOrg = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/api/org/register", formData);
+      await api.post("/api/org/register", formData);
 
-      setSuccess("Organization registered successfully");
+      setSuccess("Organization registered successfully 🎉");
 
-      // Optional: auto-login OR redirect to login
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login?role=ORG_ADMIN");
       }, 1500);
-
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     } finally {
@@ -43,81 +42,109 @@ const RegisterOrg = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 via-red-200 to-red-300 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 animate-fadeIn">
 
-        <h2 className="text-2xl font-bold text-center text-red-500">
-          Register Organization
-        </h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          Create a new organization account
-        </p>
+        {/* HEADER */}
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">
+            Register Organization
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Create your organization account
+          </p>
+        </div>
 
+        {/* ALERTS */}
         {success && (
-          <div className="mb-4 bg-green-100 text-green-700 px-3 py-2 rounded text-sm">
+          <div className="mb-4 bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm animate-pulse">
             ✅ {success}
           </div>
         )}
 
         {error && (
-          <div className="mb-4 bg-red-100 text-red-700 px-3 py-2 rounded text-sm">
+          <div className="mb-4 bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm animate-shake">
             ❌ {error}
           </div>
         )}
 
+        {/* FORM */}
         <form onSubmit={handleRegister} className="space-y-4">
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Organization Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-3 py-2"
-          />
+          {/* ORG NAME */}
+          <div>
+            <label className="text-sm text-gray-600">Organization Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter organization name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+            />
+          </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Admin Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-3 py-2"
-          />
+          {/* EMAIL */}
+          <div>
+            <label className="text-sm text-gray-600">Admin Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="admin@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-3 py-2"
-          />
+          {/* PASSWORD */}
+          <div>
+            <label className="text-sm text-gray-600">Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Create a strong password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+              />
+              <span
+                className="absolute right-3 top-4 text-sm cursor-pointer text-gray-500 hover:text-red-500"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </span>
+            </div>
+          </div>
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 rounded text-white font-semibold
-              ${loading ? "bg-gray-400" : "bg-red-500 hover:bg-red-600"}`}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition
+              ${loading
+                ? "bg-red-300 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600 hover:scale-[1.02]"}
+            `}
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Registering..." : "Register Organization"}
           </button>
-
         </form>
 
-        <p className="text-center text-sm mt-4">
+        {/* FOOTER */}
+        <p className="text-center text-sm text-gray-600 mt-6">
           Already registered?{" "}
           <span
-            className="text-red-500 cursor-pointer"
-            onClick={() => navigate("/login")}
+            className="text-red-500 cursor-pointer hover:underline"
+            onClick={() => navigate("/login?role=ORG_ADMIN")}
           >
             Login here
           </span>
         </p>
-
       </div>
     </div>
   );

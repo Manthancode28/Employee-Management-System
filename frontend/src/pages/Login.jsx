@@ -1,91 +1,136 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [type, setType] = useState("org");
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const role = searchParams.get("role"); 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!role) {
+      navigate("/", { replace: true });
+    }
+  }, [role, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const url =
-        type === "org"
+        role === "ORG_ADMIN"
           ? "/api/org/login"
           : "/api/auth/employee/login";
 
       const res = await api.post(url, { email, password });
 
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem(
-        "role",
-        type === "org" ? "ORG_ADMIN" : "EMPLOYEE"
-      );
+      localStorage.setItem("role", role);
 
-        navigate(type === "org" ? "/org/employees" : "/employee/dashboard");
+      navigate(
+        role === "ORG_ADMIN"
+          ? "/org/employees"
+          : "/employee/dashboard",
+        { replace: true }
+      );
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-6 rounded-xl shadow w-96 space-y-4"
-      >
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 to-red-300">
+      <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg animate-fadeIn">
 
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          <option value="org">Organization</option>
-          <option value="employee">Employee</option>
-        </select>
+        {/* HEADER */}
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">
+            {role === "ORG_ADMIN" ? "Organization Login" : "Employee Login"}
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Welcome back, please sign in
+          </p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        {/* FORM */}
+        <form onSubmit={handleLogin} className="space-y-4">
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          {/* EMAIL */}
+          <div>
+            <label className="text-sm text-gray-600">Email</label>
+            <input
+              type="email"
+              className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* PASSWORD */}
+          <div>
+            <label className="text-sm text-gray-600">Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="absolute right-3 top-4 text-sm cursor-pointer text-gray-500 hover:text-red-500"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </span>
+            </div>
+          </div>
 
-        <button className="w-full bg-red-500 text-white py-2 rounded">
-          Login
-        </button>
+          {/* ERROR */}
+          {error && (
+            <p className="text-sm text-red-500 text-center">{error}</p>
+          )}
 
-        <p className="text-center text-sm mt-3">
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition
+              ${loading ? "bg-red-300 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"}
+            `}
+          >
+            {loading ? "Signing in..." : "Login"}
+          </button>
+        </form>
+
+        {/* REGISTER (ONLY ORG) */}
+        {role === "ORG_ADMIN" && (
+          <p className="text-center text-sm text-gray-600 mt-6">
             New organization?{" "}
             <span
-                className="text-red-500 cursor-pointer"
-                onClick={() => navigate("/register")}
+              className="text-red-500 cursor-pointer hover:underline"
+              onClick={() => navigate("/register")}
             >
-                Register here
+              Register here
             </span>
-        </p>
-
-      </form>
+          </p>
+        )}
+      </div>
     </div>
   );
 };
