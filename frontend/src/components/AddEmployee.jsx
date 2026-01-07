@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios"; // ✅ AUTHENTICATED AXIOS
 
 const AddEmployee = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +13,6 @@ const AddEmployee = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  
   const departments = ["IT", "HR", "Finance", "Marketing", "Operations"];
   const roles = ["Developer", "Tester", "Manager", "HR Executive", "Intern"];
 
@@ -28,12 +27,11 @@ const AddEmployee = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/employees/add`,
-        formData
-      );
+      // ✅ TOKEN AUTOMATICALLY ATTACHED
+      const res = await api.post("/api/employees/add", formData);
 
       setSuccess(res.data.message);
+
       setFormData({
         name: "",
         email: "",
@@ -83,7 +81,6 @@ const AddEmployee = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
 
-          {/* Name */}
           <input
             type="text"
             name="name"
@@ -94,7 +91,6 @@ const AddEmployee = () => {
                        focus:ring-2 focus:ring-red-300 outline-none"
           />
 
-          {/* Email */}
           <input
             type="email"
             name="email"
@@ -105,7 +101,6 @@ const AddEmployee = () => {
                        focus:ring-2 focus:ring-red-300 outline-none"
           />
 
-          {/* Department (Dynamic) */}
           <select
             name="department"
             value={formData.department}
@@ -121,7 +116,6 @@ const AddEmployee = () => {
             ))}
           </select>
 
-          {/* Role (Dynamic) */}
           <select
             name="role"
             value={formData.role}
@@ -137,7 +131,6 @@ const AddEmployee = () => {
             ))}
           </select>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading || isDisabled}
