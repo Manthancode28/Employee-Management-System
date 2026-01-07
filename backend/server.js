@@ -8,12 +8,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/employees", require("./routes/employeeRoutes"));
-app.use("/api/org", require("./routes/orgAuthRoutes"));      // 👈 ADD THIS
-app.use("/api/auth", require("./routes/employeeAuthRoutes"));// 👈 ADD THIS (later)
 
-// Database & Server
+app.use("/api/employees", require("./routes/employeeRoutes"));
+app.use("/api/org", require("./routes/orgAuthRoutes"));     
+app.use("/api/auth", require("./routes/employeeAuthRoutes"));
+
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected");

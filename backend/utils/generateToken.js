@@ -5,5 +5,5 @@ const generateToken = (payload) => {
     expiresIn: "2d"
   });
 };
-
+    
 module.exports = generateToken;
