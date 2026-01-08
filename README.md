@@ -1,47 +1,79 @@
-# Employee Management System (EMS)
+# 🚀 Employee Management System (EMS)
 
-A simple Employee Management System built using the MERN stack to register employee details and store them securely in a database.
+A full-stack **Employee Management System** built using the **MERN stack**, designed to manage organizations, employees, and managers with **secure role-based access control** and **JWT authentication**.
 
 ---
 
 ## 📌 Project Overview
 
-The Employee Management System allows organization administrators to:
+The **Employee Management System (EMS)** is a role-based web application that allows organizations to manage their workforce efficiently.
 
-- Register their organization
-- Login securely using JWT authentication
-- Add and manage employees
-- View employee details in a structured manner
+The system supports **three user roles**:
+- **Admin (Organization)**
+- **Manager**
+- **Employee**
 
-Employees can:
+Each role has a dedicated dashboard and controlled access to features, following **real-world enterprise application standards**.
 
-- Login using provided credentials
-- Access their personalized dashboard
+---
 
-The application follows real-world enterprise standards such as role-based access control and protected routing.
+## 🎯 Key Objectives
+
+- Implement secure **role-based authentication and authorization**
+- Allow organizations to manage employees and managers
+- Provide separate dashboards based on user roles
+- Maintain clean and scalable frontend architecture
+- Follow industry-level backend security practices
+
+---
+
+## ✨ Features
+
+### 🔐 Authentication & Authorization
+- JWT-based authentication
+- Role-Based Access Control (RBAC)
+- Protected routes on frontend and backend
+
+### 🏢 Organization (Admin)
+- Register and login organization
+- Add employees and managers
+- View all employees in the organization
+- Change user roles between **Manager** and **Employee**
+- Access admin dashboard
+
+### 👨‍💼 Manager
+- Login using employee credentials
+- Access manager dashboard
+- View employee details under the organization
+
+### 👨‍💻 Employee
+- Login using assigned credentials
+- Access personal dashboard
+
+### 🧩 General
+- Centralized login system
+- Secure session handling using JWT
+- Clean and responsive UI
+- Proper frontend folder structuring
 
 ---
 
 ## 🛠 Technology Stack
 
-- **Frontend:** React.js, Tailwind CSS
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB
-- **Authentication:** JWT (JSON Web Token)
-- **API Communication:** Axios
+### Frontend
+- React.js
+- Tailwind CSS
+- React Router
+- Axios
 
----
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
 
-## ✨ Key Features
-
-- Role-based authentication and authorization
-- Protected routes for secure access
-- Landing page for role selection (Organization / Employee)
-- Interactive and clean UI
-- Organization registration module
-- Add Employee functionality
-- Employees list view for organization admins
-- Secure session handling using JWT
+### Authentication
+- JSON Web Token (JWT)
 
 ---
 
@@ -51,22 +83,24 @@ The application follows real-world enterprise standards such as role-based acces
 Employee-Management-System
 │
 ├── backend
-│ ├── controllers
-│ ├── models
-│ ├── routes
-│ ├── middleware
-│ └── server.js
+│   ├── controllers
+│   ├── models
+│   ├── routes
+│   ├── middleware
+│   ├── utils
+│   └── server.js
 │
 ├── frontend
-│ ├── src
-│ │ ├── pages
-│ │ ├── components
-│ │ ├── api
-│ │ ├── App.jsx
-│ │ └── main.jsx
+│   ├── src
+│   │   ├── api
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── dashboard
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   └── index.html
 │
 └── README.md
-```
 
 ---
 
@@ -79,6 +113,7 @@ Employee-Management-System
 5. User is redirected to the appropriate dashboard
 
 ---
+```
 
 
 ## ▶️ How to Run the Project
