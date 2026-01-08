@@ -2,31 +2,44 @@ const Employee = require("../models/Employee");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 
+/**
+ * EMPLOYEE / MANAGER LOGIN
+ */
 exports.loginEmployee = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const emp = await Employee.findOne({ email });
-  if (!emp)
-    return res.status(400).json({ message: "Invalid credentials" });
+    const emp = await Employee.findOne({ email });
+    if (!emp) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-  const isMatch = await bcrypt.compare(password, emp.password);
-  if (!isMatch)
-    return res.status(400).json({ message: "Invalid credentials" });
+    const isMatch = await bcrypt.compare(password, emp.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-  const token = generateToken({
-    userId: emp._id,
-    role: "EMPLOYEE",
-    organizationId: emp.organization
-  });
+    // 🔑 Token includes ACTUAL ROLE
+    const token = generateToken({
+      userId: emp._id,
+      role: emp.role,                  // manager | employee
+      organizationId: emp.organization
+    });
 
-  res.json({
-    message: "Employee login successful",
-    token
-  });
+    res.json({
+      message: "Login successful",
+      token,
+      role: emp.role                   // frontend needs this
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
-
-
+/**
+ * CHANGE PASSWORD (EMPLOYEE / MANAGER)
+ */
 exports.changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;

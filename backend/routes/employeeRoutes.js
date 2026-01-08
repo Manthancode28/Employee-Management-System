@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-const { addEmployee, getEmployees } = require("../controllers/employeeController");
 const auth = require("../middleware/auth");
 const authorize = require("../middleware/authorize");
+const {
+  addEmployee,
+  getEmployees
+} = require("../controllers/employeeController");
 
 
 router.post(
   "/add",
   auth,
-  authorize("ORG_ADMIN"),
+  authorize("admin"),
   addEmployee
 );
 
@@ -17,7 +20,7 @@ router.post(
 router.get(
   "/",
   auth,
-  authorize("ORG_ADMIN", "EMPLOYEE"),
+  authorize("admin", "manager"),
   getEmployees
 );
 

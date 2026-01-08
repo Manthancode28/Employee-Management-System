@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth");
 
+const auth = require("../middleware/auth");
 
 const {
   loginEmployee,
@@ -9,11 +9,10 @@ const {
 } = require("../controllers/employeeAuthController");
 
 
-router.post("/employee/login", loginEmployee);
-
+router.post("/login", loginEmployee);
 
 router.post(
-  "/employee/change-password",
+  "/change-password",
   auth,
   changePassword
 );
