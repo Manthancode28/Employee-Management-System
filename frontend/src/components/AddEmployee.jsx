@@ -10,14 +10,16 @@ const AddEmployee = () => {
     role: ""
   });
 
-  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const departments = ["IT", "HR", "Finance", "Marketing", "Operations"];
-  const roles = ["Developer", "Tester", "Manager", "HR Executive", "Intern"];
+  const roles = [
+    { label: "Manager", value: "manager" },
+    { label: "Employee", value: "employee" }
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,11 +31,8 @@ const AddEmployee = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/api/employees/add", formData);
-
-     
+      await api.post("/api/employees/add", formData);
       navigate("/org/employees");
-
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
@@ -49,10 +48,10 @@ const AddEmployee = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 via-white to-gray-100 px-4">
-      <div className="w-full max-w-md rounded-3xl bg-white/80 backdrop-blur-lg shadow-2xl p-8 transition-all hover:scale-[1.01]">
+      <div className="w-full max-w-md rounded-3xl bg-white/80 backdrop-blur-lg shadow-2xl p-8">
 
-        <h2 className="text-3xl font-extrabold text-center text-red-500">
-          Add Employee
+        <h2 className="text-3xl font-extrabold text-center text-red-500 mb-4">
+          Add User
         </h2>
 
         {error && (
@@ -63,6 +62,7 @@ const AddEmployee = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
+          {/* NAME */}
           <input
             type="text"
             name="name"
@@ -72,6 +72,7 @@ const AddEmployee = () => {
             className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
           />
 
+          {/* EMAIL */}
           <input
             type="email"
             name="email"
@@ -81,6 +82,7 @@ const AddEmployee = () => {
             className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
           />
 
+          {/* DEPARTMENT */}
           <select
             name="department"
             value={formData.department}
@@ -95,6 +97,7 @@ const AddEmployee = () => {
             ))}
           </select>
 
+          {/* ROLE */}
           <select
             name="role"
             value={formData.role}
@@ -102,23 +105,26 @@ const AddEmployee = () => {
             className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none bg-white"
           >
             <option value="">Select Role</option>
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role}
+            {roles.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
               </option>
             ))}
           </select>
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading || isDisabled}
             className={`w-full rounded-xl py-3 font-semibold text-white
-              ${loading || isDisabled
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-500 hover:bg-red-600 hover:shadow-lg"}
+              ${
+                loading || isDisabled
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600 hover:shadow-lg"
+              }
               transition-all duration-300`}
           >
-            {loading ? "Adding Employee..." : "Add Employee"}
+            {loading ? "Adding User..." : "Add User"}
           </button>
         </form>
       </div>

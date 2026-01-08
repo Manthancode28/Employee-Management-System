@@ -6,7 +6,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const role = searchParams.get("role"); 
+
+  const selectedRole = searchParams.get("role"); 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,12 +15,12 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-
+  // Redirect to landing if role not selected
   useEffect(() => {
-    if (!role) {
+    if (!selectedRole) {
       navigate("/", { replace: true });
     }
-  }, [role, navigate]);
+  }, [selectedRole, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,22 +28,32 @@ const Login = () => {
     setLoading(true);
 
     try {
+      
       const url =
-        role === "ORG_ADMIN"
+        selectedRole === "admin"
           ? "/api/org/login"
-          : "/api/auth/employee/login";
+          : "/api/auth/login";
 
       const res = await api.post(url, { email, password });
 
+      // Store token & ACTUAL role from backend
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", role);
+      localStorage.setItem("role", res.data.role);
 
-      navigate(
-        role === "ORG_ADMIN"
-          ? "/org/employees"
-          : "/employee/dashboard",
-        { replace: true }
-      );
+      /**
+       * Redirect strictly based on BACKEND role
+       */
+      if (res.data.role === "admin") {
+        navigate("/org/employees", { replace: true });
+      } else if (res.data.role === "manager") {
+        navigate("/manager/dashboard", { replace: true });
+      } else if (res.data.role === "employee") {
+        navigate("/employee/dashboard", { replace: true });
+      } else {
+        // safety fallback
+        navigate("/", { replace: true });
+      }
+
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials");
     } finally {
@@ -57,7 +68,11 @@ const Login = () => {
         {/* HEADER */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800">
-            {role === "ORG_ADMIN" ? "Organization Login" : "Employee Login"}
+            {selectedRole === "admin"
+              ? "Organization Login"
+              : selectedRole === "manager"
+              ? "Manager Login"
+              : "Employee Login"}
           </h2>
           <p className="text-sm text-gray-500 mt-1">
             Welcome back, please sign in
@@ -111,15 +126,19 @@ const Login = () => {
             type="submit"
             disabled={loading}
             className={`w-full py-3 rounded-lg text-white font-semibold transition
-              ${loading ? "bg-red-300 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"}
+              ${
+                loading
+                  ? "bg-red-300 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600"
+              }
             `}
           >
             {loading ? "Signing in..." : "Login"}
           </button>
         </form>
 
-        {/* REGISTER */}
-        {role === "ORG_ADMIN" && (
+        {/* REGISTER (ADMIN ONLY) */}
+        {selectedRole === "admin" && (
           <p className="text-center text-sm text-gray-600 mt-6">
             New organization?{" "}
             <span

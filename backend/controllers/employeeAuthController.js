@@ -2,9 +2,7 @@ const Employee = require("../models/Employee");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 
-/**
- * EMPLOYEE / MANAGER LOGIN
- */
+
 exports.loginEmployee = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -19,7 +17,7 @@ exports.loginEmployee = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // 🔑 Token includes ACTUAL ROLE
+   
     const token = generateToken({
       userId: emp._id,
       role: emp.role,                  // manager | employee

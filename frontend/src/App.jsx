@@ -5,26 +5,23 @@ import RegisterOrg from "./pages/RegisterOrg";
 import OrgEmployees from "./pages/OrgEmployees";
 import AddEmployee from "./components/AddEmployee";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+import ManagerDashboard from "./pages/ManagerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import SelectRole from "./pages/SelectRole"; // 👈 NEW LANDING PAGE
+import SelectRole from "./pages/SelectRole";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* LANDING PAGE */}
         <Route path="/" element={<SelectRole />} />
-
-        {/* AUTH */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterOrg />} />
 
-        {/* ORGANIZATION ROUTES */}
         <Route
           path="/org/employees"
           element={
-            <ProtectedRoute role="ORG_ADMIN">
+            <ProtectedRoute role="admin">
               <OrgEmployees />
             </ProtectedRoute>
           }
@@ -33,23 +30,30 @@ function App() {
         <Route
           path="/org/add-employee"
           element={
-            <ProtectedRoute role="ORG_ADMIN">
+            <ProtectedRoute role="admin">
               <AddEmployee />
             </ProtectedRoute>
           }
         />
 
-        {/* EMPLOYEE ROUTES */}
+        <Route
+          path="/manager/dashboard"
+          element={
+            <ProtectedRoute role="manager">
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/employee/dashboard"
           element={
-            <ProtectedRoute role="EMPLOYEE">
+            <ProtectedRoute role="employee">
               <EmployeeDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>

@@ -1,13 +1,10 @@
 const Employee = require("../models/Employee");
 const bcrypt = require("bcryptjs");
 
-/**
- * ADMIN ONLY
- * Add Employee or Manager
- */
+
 exports.addEmployee = async (req, res) => {
   try {
-    // 🔒 Extra safety (even if middleware exists)
+    
     if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Access denied" });
     }
@@ -18,7 +15,7 @@ exports.addEmployee = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // ❌ Admin cannot create another admin here
+   
     if (!["manager", "employee"].includes(role)) {
       return res.status(400).json({ message: "Invalid role" });
     }
@@ -72,6 +69,43 @@ exports.getEmployees = async (req, res) => {
 
     const employees = await Employee.find(filter).select("-password");
     res.json(employees);
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+exports.changeEmployeeRole = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { employeeId, newRole } = req.body;
+
+    if (!["manager", "employee"].includes(newRole)) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+
+    const employee = await Employee.findOne({
+      _id: employeeId,
+      organization: req.user.organizationId
+    });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    employee.role = newRole;
+    await employee.save();
+
+    res.json({
+      message: "Role updated successfully",
+      employeeId,
+      newRole
+    });
 
   } catch (err) {
     res.status(500).json({ message: "Server error" });

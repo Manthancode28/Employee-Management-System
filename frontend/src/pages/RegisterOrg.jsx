@@ -32,7 +32,7 @@ const RegisterOrg = () => {
       setSuccess("Organization registered successfully 🎉");
 
       setTimeout(() => {
-        navigate("/login?role=ORG_ADMIN");
+        navigate("/login?role=admin");
       }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");

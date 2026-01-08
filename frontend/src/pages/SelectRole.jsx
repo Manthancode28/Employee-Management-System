@@ -5,48 +5,56 @@ function SelectRole() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 via-red-200 to-red-300">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-3xl w-full text-center animate-fadeIn">
+      <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-4xl w-full text-center">
 
-        {/* HEADER */}
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <h1 className="text-4xl font-bold mb-2">
           Employee Management System
         </h1>
         <p className="text-gray-500 mb-10">
           Choose how you want to continue
         </p>
 
-        {/* ROLE CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-          {/* ORGANIZATION */}
+          {/* ADMIN */}
           <div
-            onClick={() => navigate("/login?role=ORG_ADMIN")}
-            className="group cursor-pointer bg-linear-to-br from-red-500 to-red-600 rounded-2xl p-8 text-white shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            onClick={() => navigate("/login?role=admin")}
+            className="cursor-pointer bg-red-500 text-white p-8 rounded-2xl hover:scale-105 transition"
           >
-            <div className="text-6xl mb-4 group-hover:animate-bounce">
-              🏢
-            </div>
+            <div className="text-5xl mb-3">🏢</div>
             <h2 className="text-2xl font-semibold mb-2">
               Organization
             </h2>
-            <p className="text-red-100">
-              Manage employees, roles and operations
+            <p className="text-red-100 text-sm">
+              Admin access & full control
+            </p>
+          </div>
+
+          {/* MANAGER */}
+          <div
+            onClick={() => navigate("/login?role=manager")}
+            className="cursor-pointer bg-blue-600 text-white p-8 rounded-2xl hover:scale-105 transition"
+          >
+            <div className="text-5xl mb-3">👨‍💼</div>
+            <h2 className="text-2xl font-semibold mb-2">
+              Manager
+            </h2>
+            <p className="text-blue-100 text-sm">
+              Manage employee activities
             </p>
           </div>
 
           {/* EMPLOYEE */}
           <div
-            onClick={() => navigate("/login?role=EMPLOYEE")}
-            className="group cursor-pointer bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-8 text-white shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            onClick={() => navigate("/login?role=employee")}
+            className="cursor-pointer bg-gray-800 text-white p-8 rounded-2xl hover:scale-105 transition"
           >
-            <div className="text-6xl mb-4 group-hover:animate-bounce">
-              👨‍💼
-            </div>
+            <div className="text-5xl mb-3">👨‍💻</div>
             <h2 className="text-2xl font-semibold mb-2">
               Employee
             </h2>
-            <p className="text-gray-300">
-              Access your dashboard and tasks
+            <p className="text-gray-300 text-sm">
+              View personal dashboard
             </p>
           </div>
 
