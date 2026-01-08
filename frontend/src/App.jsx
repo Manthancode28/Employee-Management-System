@@ -1,13 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+// Pages
 import Login from "./pages/Login";
 import RegisterOrg from "./pages/RegisterOrg";
-import OrgEmployees from "./pages/OrgEmployees";
-import AddEmployee from "./components/AddEmployee";
-import EmployeeDashboard from "./pages/EmployeeDashboard";
-import ManagerDashboard from "./pages/ManagerDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import SelectRole from "./pages/SelectRole";
+import OrgEmployees from "./pages/OrgEmployees";
+
+// Components
+import AddEmployee from "./components/AddEmployee";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Dashboards 
+import AdminDashboard from "./dashboard/AdminDashboard";
+import ManagerDashboard from "./dashboard/ManagerDashboard";
+import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 
 function App() {
   return (
@@ -15,14 +21,17 @@ function App() {
       <Routes>
 
         <Route path="/" element={<SelectRole />} />
+
+        {/* AUTH */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterOrg />} />
 
+        {/* ADMIN DASHBOARD */}
         <Route
           path="/org/employees"
           element={
             <ProtectedRoute role="admin">
-              <OrgEmployees />
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
@@ -36,6 +45,7 @@ function App() {
           }
         />
 
+        {/* MANAGER DASHBOARD */}
         <Route
           path="/manager/dashboard"
           element={
@@ -45,6 +55,7 @@ function App() {
           }
         />
 
+        {/* EMPLOYEE DASHBOARD */}
         <Route
           path="/employee/dashboard"
           element={
@@ -54,6 +65,7 @@ function App() {
           }
         />
 
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>

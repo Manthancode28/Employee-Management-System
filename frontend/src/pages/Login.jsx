@@ -6,8 +6,11 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-
-  const selectedRole = searchParams.get("role"); 
+  /**
+   * role from URL is ONLY for UI context
+   * Actual authorization role always comes from backend
+   */
+  const selectedRole = searchParams.get("role"); // admin | manager | employee
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +18,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Redirect to landing if role not selected
+  // Redirect to landing page if role is missing
   useEffect(() => {
     if (!selectedRole) {
       navigate("/", { replace: true });
@@ -28,7 +31,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      
+    
       const url =
         selectedRole === "admin"
           ? "/api/org/login"
@@ -36,22 +39,21 @@ const Login = () => {
 
       const res = await api.post(url, { email, password });
 
-      // Store token & ACTUAL role from backend
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
 
-      /**
-       * Redirect strictly based on BACKEND role
-       */
-      if (res.data.role === "admin") {
-        navigate("/org/employees", { replace: true });
-      } else if (res.data.role === "manager") {
-        navigate("/manager/dashboard", { replace: true });
-      } else if (res.data.role === "employee") {
-        navigate("/employee/dashboard", { replace: true });
-      } else {
-        // safety fallback
-        navigate("/", { replace: true });
+      switch (res.data.role) {
+        case "admin":
+          navigate("/org/employees", { replace: true });
+          break;
+        case "manager":
+          navigate("/manager/dashboard", { replace: true });
+          break;
+        case "employee":
+          navigate("/employee/dashboard", { replace: true });
+          break;
+        default:
+          navigate("/", { replace: true });
       }
 
     } catch (err) {
