@@ -1,9 +1,13 @@
+import DashboardLayout from "../components/layout/DashboardLayout";
+
 const EmployeeDashboard = () => {
   return (
-    <div className="p-6">
+    <DashboardLayout>
       <h1 className="text-2xl font-bold">Employee Dashboard</h1>
-      <p>Welcome to your dashboard.</p>
-    </div>
+      <p className="text-gray-600 mt-2">
+        Welcome! You can view your profile and activities here.
+      </p>
+    </DashboardLayout>
   );
 };
 

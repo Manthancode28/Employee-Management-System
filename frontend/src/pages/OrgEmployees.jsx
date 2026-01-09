@@ -33,7 +33,6 @@ const OrgEmployees = () => {
         newRole
       });
 
-      // Refresh employee list
       fetchEmployees();
     } catch (err) {
       alert("Failed to change role");
@@ -51,7 +50,7 @@ const OrgEmployees = () => {
         {/* ADD EMPLOYEE (ADMIN ONLY) */}
         {role === "admin" && (
           <button
-            onClick={() => navigate("/org/add-employee")}
+            onClick={() => navigate("/admin/add-employee")}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           >
             + Add Employee
@@ -66,8 +65,6 @@ const OrgEmployees = () => {
             <th className="p-2 border">Email</th>
             <th className="p-2 border">Department</th>
             <th className="p-2 border">Current Role</th>
-
-            {/* ADMIN ONLY */}
             {role === "admin" && (
               <th className="p-2 border">Change Role</th>
             )}
@@ -82,7 +79,6 @@ const OrgEmployees = () => {
               <td className="p-2 border">{emp.department}</td>
               <td className="p-2 border capitalize">{emp.role}</td>
 
-              {/* ROLE CHANGE DROPDOWN (ADMIN ONLY) */}
               {role === "admin" && (
                 <td className="p-2 border">
                   <select

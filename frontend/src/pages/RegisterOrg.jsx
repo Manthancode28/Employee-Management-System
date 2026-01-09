@@ -140,7 +140,7 @@ const RegisterOrg = () => {
           Already registered?{" "}
           <span
             className="text-red-500 cursor-pointer hover:underline"
-            onClick={() => navigate("/login?role=ORG_ADMIN")}
+            onClick={() => navigate("/login?role=admin")}
           >
             Login here
           </span>

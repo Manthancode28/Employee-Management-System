@@ -32,7 +32,7 @@ const AddEmployee = () => {
 
     try {
       await api.post("/api/employees/add", formData);
-      navigate("/org/employees");
+      navigate("/admin/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {

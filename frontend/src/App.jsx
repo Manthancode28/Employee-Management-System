@@ -1,34 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Pages
+// Public pages
 import Login from "./pages/Login";
 import RegisterOrg from "./pages/RegisterOrg";
 import SelectRole from "./pages/SelectRole";
-import OrgEmployees from "./pages/OrgEmployees";
+
+// Dashboards
+import AdminDashboard from "./dashboard/AdminDashboard";
+import ManagerDashboard from "./dashboard/ManagerDashboard";
+import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 
 // Components
 import AddEmployee from "./components/AddEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-// Dashboards 
-import AdminDashboard from "./dashboard/AdminDashboard";
-import ManagerDashboard from "./dashboard/ManagerDashboard";
-import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
 
+        {/* PUBLIC */}
         <Route path="/" element={<SelectRole />} />
-
-        {/* AUTH */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterOrg />} />
 
-        {/* ADMIN DASHBOARD */}
+        {/* ADMIN */}
         <Route
-          path="/org/employees"
+          path="/admin/dashboard"
           element={
             <ProtectedRoute role="admin">
               <AdminDashboard />
@@ -37,7 +35,7 @@ function App() {
         />
 
         <Route
-          path="/org/add-employee"
+          path="/admin/add-employee"
           element={
             <ProtectedRoute role="admin">
               <AddEmployee />
@@ -45,7 +43,7 @@ function App() {
           }
         />
 
-        {/* MANAGER DASHBOARD */}
+        {/* MANAGER */}
         <Route
           path="/manager/dashboard"
           element={
@@ -55,7 +53,7 @@ function App() {
           }
         />
 
-        {/* EMPLOYEE DASHBOARD */}
+        {/* EMPLOYEE */}
         <Route
           path="/employee/dashboard"
           element={
@@ -66,7 +64,7 @@ function App() {
         />
 
         {/* FALLBACK */}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
     </BrowserRouter>

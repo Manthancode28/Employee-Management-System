@@ -44,7 +44,7 @@ const Login = () => {
 
       switch (res.data.role) {
         case "admin":
-          navigate("/org/employees", { replace: true });
+          navigate("/admin/dashboard", { replace: true });
           break;
         case "manager":
           navigate("/manager/dashboard", { replace: true });
