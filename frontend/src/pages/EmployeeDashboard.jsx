@@ -1,8 +1,10 @@
 const EmployeeDashboard = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Employee Dashboard</h1>
-      <p>Welcome to your dashboard.</p>
+    <div style={{ padding: 20 }}>
+      <h1>Employee Dashboard</h1>
+      <div style={{ background: "red", color: "white", padding: 20 }}>
+        Attendance Widget Should Be Below
+      </div>
     </div>
   );
 };
