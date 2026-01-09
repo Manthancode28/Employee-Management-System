@@ -9,7 +9,7 @@ const attendanceSchema = new mongoose.Schema(
     },
 
     date: {
-      type: String, // YYYY-MM-DD
+      type: String, 
       required: true
     },
 
@@ -24,7 +24,8 @@ const attendanceSchema = new mongoose.Schema(
       location: {
         lat: Number,
         lng: Number
-      }
+      },
+      city: String,
     },
 
     checkOut: {
@@ -32,7 +33,8 @@ const attendanceSchema = new mongoose.Schema(
       location: {
         lat: Number,
         lng: Number
-      }
+      },
+      city: String,
     }
   },
   { timestamps: true }

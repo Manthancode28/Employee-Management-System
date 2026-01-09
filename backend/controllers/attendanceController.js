@@ -1,20 +1,30 @@
 const Attendance = require("../models/Attendance");
+const getCityFromLatLng = require("../utils/getCityFromLatLng");
 
-const today = () => new Date().toISOString().split("T")[0];
+const todayDate = () => new Date().toISOString().split("T")[0];
+
 
 exports.checkIn = async (req, res) => {
   try {
     const { workType, location } = req.body;
-    const today = new Date().toISOString().split("T")[0];
+    const today = todayDate();
 
     const exists = await Attendance.findOne({
       employee: req.user.userId,
-      date: today
+      date: today,
     });
 
     if (exists) {
-      return res.status(400).json({ message: "Already checked in today" });
+      return res.status(400).json({
+        message: "Already checked in today",
+      });
     }
+
+    // 🔥 Convert lat/lng to city
+    const city = await getCityFromLatLng(
+      location.lat,
+      location.lng
+    );
 
     await Attendance.create({
       employee: req.user.userId,
@@ -22,8 +32,9 @@ exports.checkIn = async (req, res) => {
       workType,
       checkIn: {
         time: new Date(),
-        location
-      }
+        location,
+        city, // ✅ STORED
+      },
     });
 
     res.json({ message: "Checked in successfully" });
@@ -33,28 +44,41 @@ exports.checkIn = async (req, res) => {
   }
 };
 
-
+/* =======================
+   CHECK OUT
+======================= */
 exports.checkOut = async (req, res) => {
   try {
     const { location } = req.body;
-    const today = new Date().toISOString().split("T")[0];
+    const today = todayDate();
 
     const attendance = await Attendance.findOne({
       employee: req.user.userId,
-      date: today
+      date: today,
     });
 
     if (!attendance) {
-      return res.status(400).json({ message: "Check-in required" });
+      return res.status(400).json({
+        message: "Check-in required",
+      });
     }
 
     if (attendance.checkOut?.time) {
-      return res.status(400).json({ message: "Already checked out" });
+      return res.status(400).json({
+        message: "Already checked out",
+      });
     }
+
+    // 🔥 Convert lat/lng to city
+    const city = await getCityFromLatLng(
+      location.lat,
+      location.lng
+    );
 
     attendance.checkOut = {
       time: new Date(),
-      location
+      location,
+      city, // ✅ STORED
     };
 
     await attendance.save();
@@ -65,4 +89,3 @@ exports.checkOut = async (req, res) => {
     res.status(500).json({ message: "Check-out failed" });
   }
 };
-
