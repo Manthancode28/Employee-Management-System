@@ -1,7 +1,9 @@
 const Topbar = () => {
   return (
-    <div className="h-14 bg-white shadow flex items-center px-6">
-      <h1 className="font-semibold">Employee Management System</h1>
+    <div className="h-16 bg-white shadow flex items-center px-6">
+      <h1 className="text-lg font-semibold text-gray-800">
+        Employee Management System
+      </h1>
     </div>
   );
 };
