@@ -7,5 +7,5 @@ export const getAllAttendance = () =>
   api.get("/api/attendance/all");
 
 export const getManagerAttendance = () =>
-  api.get("/attendance/manager");
+  api.get("/api/attendance/manager");
 
