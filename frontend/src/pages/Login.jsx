@@ -6,10 +6,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  /**
-   * role from URL is ONLY for UI context
-   * Actual authorization role always comes from backend
-   */
+  
   const selectedRole = searchParams.get("role"); // admin | manager | employee
 
   const [email, setEmail] = useState("");

@@ -54,10 +54,7 @@ exports.addEmployee = async (req, res) => {
   }
 };
 
-/**
- * ADMIN → Get all employees & managers
- * MANAGER → Get only employees
- */
+
 exports.getEmployees = async (req, res) => {
   try {
     let filter = { organization: req.user.organizationId };
