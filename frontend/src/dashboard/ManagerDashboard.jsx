@@ -4,6 +4,8 @@ import api from "../api/axios";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/AttendanceWidget";
 import StatCard from "../components/ui/StatCard";
+import ManagerAttendanceTable from "../components/ManagerAttendanceTable";
+
 
 
 const ManagerDashboard = () => {
@@ -89,6 +91,8 @@ const ManagerDashboard = () => {
           </div>
         )}
       </div>
+      <ManagerAttendanceTable />
+
     </DashboardLayout>
   );
 };

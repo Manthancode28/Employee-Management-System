@@ -9,7 +9,7 @@ const attendanceSchema = new mongoose.Schema(
     },
 
     date: {
-      type: String, 
+      type: String, // YYYY-MM-DD
       required: true
     },
 
@@ -35,9 +35,30 @@ const attendanceSchema = new mongoose.Schema(
         lng: Number
       },
       city: String,
+    },
+
+    // 🔥 NEW FIELDS
+    status: {
+      type: String,
+      enum: [
+        "Present",
+        "Late",
+        "Absent",
+        "Holiday",
+        "WeeklyOff",
+        "Leave"
+      ],
+      default: "Absent"
+    },
+
+    lateMinutes: {
+      type: Number,
+      default: 0
     }
   },
   { timestamps: true }
 );
+
+attendanceSchema.index({ employee: 1,  date: 1 }, { unique: true });
 
 module.exports = mongoose.model("Attendance", attendanceSchema);
