@@ -5,98 +5,104 @@ import { useNavigate } from "react-router-dom";
 const OrgEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const role = localStorage.getItem("role");
   const navigate = useNavigate();
 
   const fetchEmployees = async () => {
-    try {
-      const res = await api.get("/api/employees");
-      setEmployees(res.data);
-    } catch (err) {
-      setError("Failed to load employees");
-    } finally {
-      setLoading(false);
-    }
+    const res = await api.get("/api/employees");
+    setEmployees(res.data);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchEmployees();
   }, []);
 
-  // 🔁 Change role (ADMIN ONLY)
-  const handleRoleChange = async (employeeId, newRole) => {
-    try {
-      await api.put("/api/employees/change-role", {
-        employeeId,
-        newRole
-      });
-
-      fetchEmployees();
-    } catch (err) {
-      alert("Failed to change role");
-    }
+  const handleRoleChange = async (id, newRole) => {
+    await api.put("/api/employees/change-role", {
+      employeeId: id,
+      newRole
+    });
+    fetchEmployees();
   };
 
-  if (loading) return <p className="p-6">Loading employees...</p>;
-  if (error) return <p className="p-6 text-red-500">{error}</p>;
+  if (loading) {
+    return (
+      <div className="mt-10 text-center text-gray-500">
+        Loading employees...
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Employees</h1>
+    <div className="bg-white mt-12 rounded-2xl shadow">
+      <div className="p-5 border-b bg-red-50 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-red-600">
+          Employees
+        </h2>
 
-        {/* ADD EMPLOYEE (ADMIN ONLY) */}
         {role === "admin" && (
           <button
             onClick={() => navigate("/admin/add-employee")}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-medium"
           >
             + Add Employee
           </button>
         )}
       </div>
 
-      <table className="w-full border border-gray-200">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Email</th>
-            <th className="p-2 border">Department</th>
-            <th className="p-2 border">Current Role</th>
-            {role === "admin" && (
-              <th className="p-2 border">Change Role</th>
-            )}
-          </tr>
-        </thead>
-
-        <tbody>
-          {employees.map((emp) => (
-            <tr key={emp._id} className="text-center">
-              <td className="p-2 border">{emp.name}</td>
-              <td className="p-2 border">{emp.email}</td>
-              <td className="p-2 border">{emp.department}</td>
-              <td className="p-2 border capitalize">{emp.role}</td>
-
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 text-gray-600">
+            <tr>
+              <th className="px-6 py-3 text-left">Name</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Department</th>
+              <th className="px-6 py-3">Role</th>
               {role === "admin" && (
-                <td className="p-2 border">
-                  <select
-                    value={emp.role}
-                    onChange={(e) =>
-                      handleRoleChange(emp._id, e.target.value)
-                    }
-                    className="border rounded px-2 py-1"
-                  >
-                    <option value="employee">Employee</option>
-                    <option value="manager">Manager</option>
-                  </select>
-                </td>
+                <th className="px-6 py-3">Change Role</th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {employees.map(emp => (
+              <tr
+                key={emp._id}
+                className="border-t hover:bg-gray-50 transition"
+              >
+                <td className="px-6 py-4 font-medium">
+                  {emp.name}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  {emp.email}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  {emp.department}
+                </td>
+                <td className="px-6 py-4 text-center capitalize">
+                  {emp.role}
+                </td>
+
+                {role === "admin" && (
+                  <td className="px-6 py-4 text-center">
+                    <select
+                      value={emp.role}
+                      onChange={(e) =>
+                        handleRoleChange(emp._id, e.target.value)
+                      }
+                      className="border rounded-xl px-3 py-1 focus:ring-2 focus:ring-red-300"
+                    >
+                      <option value="employee">Employee</option>
+                      <option value="manager">Manager</option>
+                    </select>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

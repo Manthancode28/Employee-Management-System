@@ -1,13 +1,13 @@
 import { useState } from "react";
 import api from "../api/axios";
 import { getCurrentLocation } from "../utils/getLocation";
-import { 
-  ClockIcon, 
-  CheckCircleIcon, 
-  XCircleIcon, 
-  HomeIcon, 
+import {
+  ClockIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  HomeIcon,
   BuildingOfficeIcon,
-  MapPinIcon 
+  MapPinIcon,
 } from "@heroicons/react/24/outline";
 
 const OFFICE_LOCATION = {
@@ -15,10 +15,30 @@ const OFFICE_LOCATION = {
   lng: 73.8567,
 };
 
+const WORK_MODES = {
+  WFO: {
+    label: "Work From Office",
+    icon: BuildingOfficeIcon,
+    badge: "bg-blue-100 text-blue-700 border-blue-200",
+    card: "bg-blue-50",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+  },
+  WFH: {
+    label: "Work From Home",
+    icon: HomeIcon,
+    badge: "bg-purple-100 text-purple-700 border-purple-200",
+    card: "bg-purple-50",
+    iconBg: "bg-purple-100",
+    iconColor: "text-purple-600",
+  },
+};
+
 const AttendanceWidget = () => {
   const [workType, setWorkType] = useState("WFO");
   const [loading, setLoading] = useState(false);
-  const [attendanceStatus, setAttendanceStatus] = useState(null);
+  const [statusMsg, setStatusMsg] = useState(null); // { type, text, time }
+  const [checkedIn, setCheckedIn] = useState(false);
 
   const getLocation = async () => {
     if (workType === "WFO") return OFFICE_LOCATION;
@@ -30,10 +50,18 @@ const AttendanceWidget = () => {
       setLoading(true);
       const location = await getLocation();
       await api.post("/api/attendance/checkin", { workType, location });
-      setAttendanceStatus({ type: "checkin", time: new Date().toLocaleTimeString() });
-      alert("Checked in successfully!");
+
+      setCheckedIn(true);
+      setStatusMsg({
+        type: "success",
+        text: "Checked in successfully",
+        time: new Date().toLocaleTimeString(),
+      });
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to check in");
+      setStatusMsg({
+        type: "error",
+        text: err.response?.data?.message || "Check-in failed",
+      });
     } finally {
       setLoading(false);
     }
@@ -44,158 +72,133 @@ const AttendanceWidget = () => {
       setLoading(true);
       const location = await getLocation();
       await api.post("/api/attendance/checkout", { location });
-      setAttendanceStatus({ type: "checkout", time: new Date().toLocaleTimeString() });
-      alert("Checked out successfully!");
+
+      setCheckedIn(false);
+      setStatusMsg({
+        type: "success",
+        text: "Checked out successfully",
+        time: new Date().toLocaleTimeString(),
+      });
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to check out");
+      setStatusMsg({
+        type: "error",
+        text: err.response?.data?.message || "Check-out failed",
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const mode = WORK_MODES[workType];
+
   return (
-    <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-xl border border-blue-100 p-6 backdrop-blur-sm">
+    <div className="bg-gradient-to-br from-white to-red-50 rounded-2xl shadow-xl border border-red-100 p-6">
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
+          <div className="p-2 bg-red-500 rounded-lg">
             <ClockIcon className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-gray-800">
               Attendance
             </h2>
-            <p className="text-gray-600 text-sm">Mark your attendance</p>
+            <p className="text-gray-600 text-sm">
+              Mark your daily attendance
+            </p>
           </div>
         </div>
-        
+
         <span
-          className={`text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-2 ${
-            workType === "WFO"
-              ? "bg-blue-100 text-blue-700 border border-blue-200"
-              : "bg-purple-100 text-purple-700 border border-purple-200"
-          }`}
+          className={`text-xs px-3 py-1.5 rounded-full font-medium border flex items-center gap-2 ${mode.badge}`}
         >
-          {workType === "WFO" ? (
-            <BuildingOfficeIcon className="w-4 h-4" />
-          ) : (
-            <HomeIcon className="w-4 h-4" />
-          )}
+          <mode.icon className="w-4 h-4" />
           {workType}
         </span>
       </div>
 
-      {/* Work Mode Selector */}
+      {/* WORK MODE */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Select Work Mode
         </label>
+
         <div className="grid grid-cols-2 gap-3">
-          {[
-            { value: "WFO", label: "Work From Office", icon: BuildingOfficeIcon, color: "blue" },
-            { value: "WFH", label: "Work From Home", icon: HomeIcon, color: "purple" }
-          ].map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setWorkType(option.value)}
-              className={`p-3 rounded-xl border transition-all duration-200 flex items-center gap-3 ${
-                workType === option.value
-                  ? `bg-${option.color}-50 text-${option.color}-700 border-${option.color}-200 shadow-sm`
-                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <div className={`p-2 rounded-lg ${
-                workType === option.value ? `bg-${option.color}-100` : "bg-gray-100"
-              }`}>
-                <option.icon className={`w-5 h-5 ${
-                  workType === option.value ? `text-${option.color}-600` : "text-gray-500"
-                }`} />
-              </div>
-              <span className="text-sm font-medium">{option.label}</span>
-            </button>
-          ))}
+          {Object.keys(WORK_MODES).map((key) => {
+            const opt = WORK_MODES[key];
+            const Icon = opt.icon;
+
+            return (
+              <button
+                key={key}
+                onClick={() => setWorkType(key)}
+                className={`p-3 rounded-xl border flex items-center gap-3 transition ${
+                  workType === key
+                    ? `${opt.card} border-red-300 shadow-sm`
+                    : "bg-white border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                <div className={`p-2 rounded-lg ${opt.iconBg}`}>
+                  <Icon className={`w-5 h-5 ${opt.iconColor}`} />
+                </div>
+                <span className="text-sm font-medium">
+                  {opt.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Location Info */}
-      <div className="mb-6 bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+      {/* LOCATION INFO */}
+      <div className="mb-6 bg-red-50 rounded-xl p-4 border border-red-100">
         <div className="flex items-center gap-3 text-sm text-gray-700">
-          <MapPinIcon className="w-5 h-5 text-blue-600" />
+          <MapPinIcon className="w-5 h-5 text-red-600" />
           <div>
             <p className="font-medium">
               {workType === "WFO" ? "Office Location" : "Remote Location"}
             </p>
-            <p className="text-gray-600 text-xs">
-              {workType === "WFO" 
-                ? "Using office coordinates for attendance" 
+            <p className="text-xs text-gray-600">
+              {workType === "WFO"
+                ? "Office coordinates will be used"
                 : "Your current location will be used"}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* ACTION BUTTONS */}
       <div className="flex gap-3">
         <button
           onClick={handleCheckIn}
-          disabled={loading}
-          className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 font-medium shadow-md hover:shadow-lg"
+          disabled={loading || checkedIn}
+          className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-medium disabled:opacity-50"
         >
-          {loading ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Processing...
-            </>
-          ) : (
-            <>
-              <CheckCircleIcon className="w-5 h-5" />
-              Check In
-            </>
-          )}
+          Check In
         </button>
 
         <button
           onClick={handleCheckOut}
-          disabled={loading}
-          className="flex-1 bg-gradient-to-r from-rose-500 to-rose-600 text-white py-3 rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 font-medium shadow-md hover:shadow-lg"
+          disabled={loading || !checkedIn}
+          className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium disabled:opacity-50"
         >
-          {loading ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Processing...
-            </>
-          ) : (
-            <>
-              <XCircleIcon className="w-5 h-5" />
-              Check Out
-            </>
-          )}
+          Check Out
         </button>
       </div>
 
-      {/* Status Display */}
-      {attendanceStatus && (
-        <div className={`mt-4 p-3 rounded-lg flex items-center gap-3 ${
-          attendanceStatus.type === "checkin" 
-            ? "bg-emerald-50 border border-emerald-100" 
-            : "bg-rose-50 border border-rose-100"
-        }`}>
-          <div className={`p-2 rounded-full ${
-            attendanceStatus.type === "checkin" ? "bg-emerald-100" : "bg-rose-100"
-          }`}>
-            {attendanceStatus.type === "checkin" ? (
-              <CheckCircleIcon className="w-5 h-5 text-emerald-600" />
-            ) : (
-              <XCircleIcon className="w-5 h-5 text-rose-600" />
-            )}
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800">
-              Successfully {attendanceStatus.type === "checkin" ? "checked in" : "checked out"}
-            </p>
-            <p className="text-xs text-gray-600">
-              {attendanceStatus.time}
-            </p>
-          </div>
+      {/* STATUS MESSAGE */}
+      {statusMsg && (
+        <div
+          className={`mt-4 p-3 rounded-lg text-sm ${
+            statusMsg.type === "success"
+              ? "bg-green-50 border border-green-200 text-green-700"
+              : "bg-red-50 border border-red-200 text-red-700"
+          }`}
+        >
+          <p className="font-medium">{statusMsg.text}</p>
+          {statusMsg.time && (
+            <p className="text-xs mt-1">{statusMsg.time}</p>
+          )}
         </div>
       )}
     </div>

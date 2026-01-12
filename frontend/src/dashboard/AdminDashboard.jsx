@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    api.get("/api/employees").then((res) => setEmployees(res.data));
+    api.get("/api/employees").then(res => setEmployees(res.data));
   }, []);
 
   const total = employees.length;
@@ -19,21 +19,32 @@ const AdminDashboard = () => {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold mb-4">
-        Admin Dashboard
-      </h1>
-
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <StatCard title="Total Employees" value={total} />
-        <StatCard title="Managers" value={managers} />
-        <StatCard title="Employees" value={staff} />
+      {/* HEADER */}
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Admin Dashboard
+        </h1>
+        <p className="text-gray-500 mt-1">
+          Organization overview and controls
+        </p>
       </div>
 
-      {/* ATTENDANCE TABLE */}
-      <AdminAttendanceTable />
+      {/* KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+        <StatCard title="Total Employees" value={total} icon="👥" />
+        <StatCard title="Managers" value={managers} icon="👨‍💼" />
+        <StatCard title="Employees" value={staff} icon="👨‍💻" />
+      </div>
 
-      {/* EMPLOYEE LIST */}
-      <OrgEmployees />
+      {/* ATTENDANCE */}
+      <section className="mb-14">
+        <AdminAttendanceTable />
+      </section>
+
+      {/* EMPLOYEES */}
+      <section>
+        <OrgEmployees />
+      </section>
     </DashboardLayout>
   );
 };
