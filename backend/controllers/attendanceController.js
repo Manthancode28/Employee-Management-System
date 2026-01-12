@@ -161,17 +161,35 @@ exports.getAllAttendance = async (req, res) => {
 
 /* ================= MANAGER ================= */
 exports.getManagerAttendance = async (req, res) => {
-  const employees = await Employee.find({
-    managerId: req.user.userId
-  }).select("_id");
+  try {
+    // 1️⃣ Get logged-in manager
+    const manager = await Employee.findById(req.user.userId);
 
-  const ids = employees.map(e => e._id);
+    if (!manager || manager.role !== "manager") {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
-  const attendance = await Attendance.find({
-    employee: { $in: ids }
-  })
-    .populate("employee", "name email department")
-    .sort({ date: -1 });
+    // 2️⃣ Get employees from same department
+    const employees = await Employee.find({
+      department: manager.department,
+      role: "employee"
+    }).select("_id");
 
-  res.json(attendance);
+    const employeeIds = employees.map(e => e._id);
+
+    // 3️⃣ Fetch attendance
+    const attendance = await Attendance.find({
+      employee: { $in: employeeIds }
+    })
+      .populate("employee", "name email department")
+      .sort({ date: -1 });
+
+    res.json(attendance);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Failed to load manager attendance"
+    });
+  }
 };
+

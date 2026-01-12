@@ -5,6 +5,8 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/AttendanceWidget";
 import StatCard from "../components/ui/StatCard";
 import ManagerAttendanceTable from "../components/ManagerAttendanceTable";
+import ManagerLeaveRequests from "../components/ManagerLeaveRequests";
+
 
 
 
@@ -92,6 +94,10 @@ const ManagerDashboard = () => {
         )}
       </div>
       <ManagerAttendanceTable />
+      <br></br>
+      <br />
+      <ManagerLeaveRequests />
+
 
     </DashboardLayout>
   );
