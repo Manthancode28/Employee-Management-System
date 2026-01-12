@@ -7,98 +7,52 @@ import StatCard from "../components/ui/StatCard";
 import ManagerAttendanceTable from "../components/ManagerAttendanceTable";
 import ManagerLeaveRequests from "../components/ManagerLeaveRequests";
 
-
-
-
 const ManagerDashboard = () => {
   const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState([]);
 
   useEffect(() => {
-    api
-      .get("/api/employees")
-      .then((res) => setEmployees(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    api.get("/api/employees").then((res) => {
+      setEmployees(res.data);
+    });
   }, []);
 
-  const totalDepartments = new Set(
-    employees.map((e) => e.department)
-  ).size;
+  const present = summary.filter(r => r.status === "Present").length;
+  const late = summary.filter(r => r.status === "Late").length;
+  const leave = summary.filter(r => r.status === "Leave").length;
 
   return (
     <DashboardLayout>
       {/* HEADER */}
-      <div className="mb-6">
+      <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-800">
           Manager Dashboard
         </h1>
-        <p className="text-gray-500">
-          Track attendance and manage your team
+        <p className="text-gray-500 mt-1">
+          Monitor attendance and manage leave requests
         </p>
       </div>
 
       {/* TOP SECTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
         <AttendanceWidget />
 
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <StatCard title="Team Members" value={employees.length} />
-          <StatCard title="Departments" value={totalDepartments} />
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <StatCard title="Present Today" value={present} />
+          <StatCard title="Late Employees" value={late} />
+          <StatCard title="On Leave" value={leave} />
         </div>
       </div>
 
-      {/* TEAM TABLE */}
-      <div className="bg-white mt-8 rounded-xl shadow overflow-hidden">
-        <div className="p-4 border-b flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-800">
-            My Team
-          </h2>
-          <span className="text-sm text-gray-500">
-            {employees.length} Employees
-          </span>
-        </div>
+      {/* ATTENDANCE TABLE */}
+      <section className="mb-14">
+        <ManagerAttendanceTable onSummaryChange={setSummary} />
+      </section>
 
-        {loading ? (
-          <p className="p-6 text-gray-500">Loading team...</p>
-        ) : employees.length === 0 ? (
-          <p className="p-6 text-gray-500">
-            No employees found
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-gray-100 text-gray-600 text-sm">
-                <tr>
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Department</th>
-                </tr>
-              </thead>
-              <tbody>
-                {employees.map((emp) => (
-                  <tr
-                    key={emp._id}
-                    className="border-t hover:bg-gray-50 transition"
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-800">
-                      {emp.name}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {emp.department}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      <ManagerAttendanceTable />
-      <br></br>
-      <br />
-      <ManagerLeaveRequests />
-
-
+      {/* LEAVE REQUESTS */}
+      <section className="mb-10">
+        <ManagerLeaveRequests />
+      </section>
     </DashboardLayout>
   );
 };
