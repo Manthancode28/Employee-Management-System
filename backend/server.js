@@ -14,6 +14,9 @@ app.use("/api/employees", require("./routes/employeeRoutes"));
 app.use("/api/org", require("./routes/orgAuthRoutes"));
 app.use("/api/auth", require("./routes/employeeAuthRoutes"));
 app.use("/api/attendance", require("./routes/attendanceRoutes"));
+app.use("/api/holidays", require("./routes/holidayRoutes"));
+app.use("/api/leaves", require("./routes/leaveRoutes"));
+
 
 
 

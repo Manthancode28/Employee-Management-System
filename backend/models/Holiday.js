@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
 
 const holidaySchema = new mongoose.Schema({
-  date: { type: Date, required: true, unique: true },
-  reason: String
+  date: {
+    type: String, // YYYY-MM-DD
+    required: true,
+    unique: true
+  },
+  name: {
+    type: String,
+    required: true
+  }
 });
 
 module.exports = mongoose.model("Holiday", holidaySchema);

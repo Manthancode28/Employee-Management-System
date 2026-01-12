@@ -1,38 +1,81 @@
 const Attendance = require("../models/Attendance");
-const getCityFromLatLng = require("../utils/getCityFromLatLng");
 const Employee = require("../models/Employee");
+const Holiday = require("../models/Holiday");
+const getCityFromLatLng = require("../utils/getCityFromLatLng");
 
+/* ================= CONFIG ================= */
+const OFFICE_LATE_TIME_HOUR = 9;
+const OFFICE_LATE_TIME_MIN = 15;
 
-const OFFICE_LATE_TIME = "9:15";
+const todayDate = () =>
+  new Date().toISOString().split("T")[0];
 
-const todayDate = () => new Date().toISOString().split("T")[0];
+const isSunday = (date) =>
+  new Date(date).getDay() === 0;
 
 const getLateMinutes = (checkInTime) => {
-  const lateTime = new Date(checkInTime);
-  lateTime.setHours(9, 15, 0, 0);
+  const officeTime = new Date(checkInTime);
+  officeTime.setHours(
+    OFFICE_LATE_TIME_HOUR,
+    OFFICE_LATE_TIME_MIN,
+    0,
+    0
+  );
 
-  if (checkInTime <= lateTime) return 0;
-  return Math.floor((checkInTime - lateTime) / 60000);
+  if (checkInTime <= officeTime) return 0;
+  return Math.floor((checkInTime - officeTime) / 60000);
 };
 
-/* =======================
-   CHECK IN
-======================= */
+/* ================= CHECK-IN ================= */
 exports.checkIn = async (req, res) => {
   try {
     const { workType, location } = req.body;
     const today = todayDate();
 
-    const exists = await Attendance.findOne({
+    let attendance = await Attendance.findOne({
       employee: req.user.userId,
-      date: today,
+      date: today
     });
 
-    if (exists) {
-      return res.status(400).json({ message: "Already checked in today" });
+    if (attendance) {
+      return res
+        .status(400)
+        .json({ message: "Attendance already marked" });
     }
 
-    const city = await getCityFromLatLng(location.lat, location.lng);
+    // Holiday
+    const holiday = await Holiday.findOne({ date: today });
+    if (holiday) {
+      attendance = await Attendance.create({
+        employee: req.user.userId,
+        date: today,
+        workType,
+        status: "Holiday"
+      });
+
+      return res.json({
+        message: `Holiday: ${holiday.name}`
+      });
+    }
+
+    // Weekly Off
+    if (isSunday(today)) {
+      await Attendance.create({
+        employee: req.user.userId,
+        date: today,
+        workType,
+        status: "WeeklyOff"
+      });
+
+      return res.json({
+        message: "Weekly Off"
+      });
+    }
+
+    const city = await getCityFromLatLng(
+      location.lat,
+      location.lng
+    );
 
     const checkInTime = new Date();
     const lateMinutes = getLateMinutes(checkInTime);
@@ -44,7 +87,7 @@ exports.checkIn = async (req, res) => {
       checkIn: {
         time: checkInTime,
         location,
-        city,
+        city
       },
       status: lateMinutes > 0 ? "Late" : "Present",
       lateMinutes
@@ -52,104 +95,83 @@ exports.checkIn = async (req, res) => {
 
     res.json({ message: "Checked in successfully" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Check-in failed" });
   }
 };
 
-/* =======================
-   CHECK OUT
-======================= */
+/* ================= CHECK-OUT ================= */
 exports.checkOut = async (req, res) => {
   try {
-    const { location } = req.body;
     const today = todayDate();
+    const { location } = req.body;
 
     const attendance = await Attendance.findOne({
       employee: req.user.userId,
-      date: today,
+      date: today
     });
 
-    if (!attendance) {
-      return res.status(400).json({ message: "Check-in required" });
+    if (!attendance || !attendance.checkIn) {
+      return res
+        .status(400)
+        .json({ message: "Check-in required" });
     }
 
     if (attendance.checkOut?.time) {
-      return res.status(400).json({ message: "Already checked out" });
+      return res
+        .status(400)
+        .json({ message: "Already checked out" });
     }
 
-    const city = await getCityFromLatLng(location.lat, location.lng);
+    const city = await getCityFromLatLng(
+      location.lat,
+      location.lng
+    );
 
     attendance.checkOut = {
       time: new Date(),
       location,
-      city,
+      city
     };
 
     await attendance.save();
-
     res.json({ message: "Checked out successfully" });
   } catch (err) {
     res.status(500).json({ message: "Check-out failed" });
   }
 };
 
-/* =======================
-   EMPLOYEE ATTENDANCE
-======================= */
+/* ================= EMPLOYEE ================= */
 exports.getMyAttendance = async (req, res) => {
-  const records = await Attendance.find({
-    employee: req.user.userId,
+  const attendance = await Attendance.find({
+    employee: req.user.userId
   }).sort({ date: -1 });
 
-  res.json(records);
+  res.json(attendance);
 };
 
-/* =======================
-   ADMIN ATTENDANCE
-======================= */
+/* ================= ADMIN ================= */
 exports.getAllAttendance = async (req, res) => {
-  const records = await Attendance.find()
-    .populate("employee", "name email role")
+  const attendance = await Attendance.find()
+    .populate("employee", "name email role department")
     .sort({ date: -1 });
 
-  res.json(records);
+  res.json(attendance);
 };
 
-
+/* ================= MANAGER ================= */
 exports.getManagerAttendance = async (req, res) => {
-  try {
-    
+  const employees = await Employee.find({
+    managerId: req.user.userId
+  }).select("_id");
 
-    // 1 Get manager from DB
-    const manager = await Employee.findById(req.user.userId);
+  const ids = employees.map(e => e._id);
 
-    if (!manager) {
-      return res.status(404).json({ message: "Manager not found" });
-    }
+  const attendance = await Attendance.find({
+    employee: { $in: ids }
+  })
+    .populate("employee", "name email department")
+    .sort({ date: -1 });
 
-    const department = manager.department;
-
-    // 2️⃣ Get employees of same department (including manager if needed)
-    const employees = await Employee.find({
-      department
-    }).select("_id");
-
-    if (employees.length === 0) {
-      return res.json([]);
-    }
-
-    const employeeIds = employees.map(e => e._id);
-
-    // 3️⃣ Get attendance of those employees
-    const attendance = await Attendance.find({
-      employee: { $in: employeeIds }
-    })
-      .populate("employee", "name email role department")
-      .sort({ date: -1 });
-
-    res.json(attendance);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to load manager attendance" });
-  }
+  res.json(attendance);
 };

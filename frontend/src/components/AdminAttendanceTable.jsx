@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
 import { getAllAttendance } from "../api/attendance";
 
+const formatLateTime = (minutes) => {
+  if (!minutes || minutes === 0) return "0";
+
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  return `${hours} hour ${remainingMinutes} min`;
+};
+
 const AdminAttendanceTable = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +55,9 @@ const AdminAttendanceTable = () => {
                 <td className="p-3 border">{r.date}</td>
                 <td className="p-3 border">{r.status}</td>
                 <td className="p-3 border">{r.workType}</td>
-                <td className="p-3 border">{r.lateMinutes}</td>
+                <td className="p-2 border">
+                {formatLateTime(r.lateMinutes)}
+              </td>
                 <td className="p-3 border">
                   {r.checkIn?.city || "-"}
                 </td>
