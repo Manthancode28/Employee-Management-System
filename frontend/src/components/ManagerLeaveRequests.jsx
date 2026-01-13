@@ -6,8 +6,9 @@ const ManagerLeaveRequests = () => {
   const [leaves, setLeaves] = useState([]);
   const [processing, setProcessing] = useState(null);
 
-  const loadLeaves = () => {
-    getManagerLeaves().then((res) => setLeaves(res.data));
+  const loadLeaves = async () => {
+    const res = await getManagerLeaves();
+    setLeaves(res.data);
   };
 
   useEffect(() => {
@@ -44,23 +45,31 @@ const ManagerLeaveRequests = () => {
               <th className="px-6 py-3 text-left">Employee</th>
               <th className="px-6 py-3">From</th>
               <th className="px-6 py-3">To</th>
-              <th className="px-6 py-3">Reason</th>
+              <th className="px-6 py-3">Type</th>
+              <th className="px-6 py-3">Days</th>
               <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3">Action</th>
             </tr>
           </thead>
           <tbody>
             {leaves.map((l) => (
-              <tr
-                key={l._id}
-                className="border-t hover:bg-gray-50 transition"
-              >
+              <tr key={l._id} className="border-t">
                 <td className="px-6 py-4 font-medium">
                   {l.employee.name}
                 </td>
                 <td className="px-6 py-4 text-center">{l.fromDate}</td>
                 <td className="px-6 py-4 text-center">{l.toDate}</td>
-                <td className="px-6 py-4">{l.reason}</td>
+                <td className="px-6 py-4 text-center">
+                  {l.leaveType}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  {l.totalDays}
+                  {l.isSandwich && (
+                    <span className="ml-2 text-xs text-red-600">
+                      (Sandwich)
+                    </span>
+                  )}
+                </td>
                 <td className="px-6 py-4 text-center">
                   <StatusBadge status={l.status} />
                 </td>
@@ -72,7 +81,7 @@ const ManagerLeaveRequests = () => {
                         onClick={() =>
                           handleAction(l._id, "Approved")
                         }
-                        className="px-3 py-1 text-xs rounded-lg bg-green-500 hover:bg-green-600 text-white"
+                        className="px-3 py-1 text-xs rounded-lg bg-green-500 text-white"
                       >
                         Approve
                       </button>
@@ -81,7 +90,7 @@ const ManagerLeaveRequests = () => {
                         onClick={() =>
                           handleAction(l._id, "Rejected")
                         }
-                        className="px-3 py-1 text-xs rounded-lg bg-red-500 hover:bg-red-600 text-white"
+                        className="px-3 py-1 text-xs rounded-lg bg-red-500 text-white"
                       >
                         Reject
                       </button>

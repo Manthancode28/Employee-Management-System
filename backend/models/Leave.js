@@ -9,13 +9,29 @@ const leaveSchema = new mongoose.Schema(
     },
 
     fromDate: {
-      type: String, // YYYY-MM-DD
+      type: String,
       required: true
     },
 
     toDate: {
-      type: String, // YYYY-MM-DD
+      type: String,
       required: true
+    },
+
+    leaveType: {
+      type: String,
+      enum: ["Casual", "Sick"],
+      required: true
+    },
+
+    totalDays: {
+      type: Number,
+      default: 0
+    },
+
+    isSandwich: {
+      type: Boolean,
+      default: false
     },
 
     reason: {
@@ -39,4 +55,3 @@ const leaveSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Leave", leaveSchema);
-
