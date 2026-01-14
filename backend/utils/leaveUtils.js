@@ -1,27 +1,21 @@
-const Holiday = require("../models/Holiday");
+const isWeeklyOff = (date) => {
+  const day = new Date(date).getDay();
+  return day === 0 || day === 6; // Sunday or Saturday
+};
 
-const getDateRange = (from, to) => {
+const getBetweenDates = (start, end) => {
   const dates = [];
-  let current = new Date(from);
-  const end = new Date(to);
+  let d = new Date(start);
+  d.setDate(d.getDate() + 1);
 
-  while (current <= end) {
-    dates.push(current.toISOString().split("T")[0]);
-    current.setDate(current.getDate() + 1);
+  while (d < new Date(end)) {
+    dates.push(d.toISOString().split("T")[0]);
+    d.setDate(d.getDate() + 1);
   }
-
   return dates;
 };
 
-const isSunday = (date) => new Date(date).getDay() === 0;
-
-const isHoliday = async (date) => {
-  const holiday = await Holiday.findOne({ date });
-  return !!holiday;
-};
-
 module.exports = {
-  getDateRange,
-  isSunday,
-  isHoliday
+  isWeeklyOff,
+  getBetweenDates
 };

@@ -8,4 +8,3 @@ export const getAllAttendance = () =>
 
 export const getManagerAttendance = () =>
   api.get("/api/attendance/manager");
-

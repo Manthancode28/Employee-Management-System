@@ -3,6 +3,7 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/AttendanceWidget";
 import EmployeeAttendanceTable from "../components/EmployeeAttendanceTable";
 import ApplyLeave from "../components/ApplyLeave";
+import EmployeeLeaveStatus from "../components/EmployeeLeaveStatus";
 import StatCard from "../components/ui/StatCard";
 
 const EmployeeDashboard = () => {
@@ -20,11 +21,11 @@ const EmployeeDashboard = () => {
           Employee Dashboard
         </h1>
         <p className="text-gray-500 mt-1">
-          Track your attendance and manage your leaves
+          Attendance and leave overview
         </p>
       </div>
 
-      {/* TOP SECTION */}
+      {/* TOP */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
         <AttendanceWidget />
 
@@ -36,12 +37,13 @@ const EmployeeDashboard = () => {
       </div>
 
       {/* APPLY LEAVE */}
-      <section className="mb-14">
-        <ApplyLeave />
-      </section>
+      <ApplyLeave />
+
+      {/* LEAVE STATUS */}
+      <EmployeeLeaveStatus />
 
       {/* ATTENDANCE TABLE */}
-      <section>
+      <section className="mt-14">
         <EmployeeAttendanceTable onSummaryChange={setSummary} />
       </section>
     </DashboardLayout>

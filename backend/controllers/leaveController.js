@@ -1,64 +1,85 @@
 const Leave = require("../models/Leave");
 const Attendance = require("../models/Attendance");
 const Employee = require("../models/Employee");
-const {
-  getDateRange,
-  isSunday,
-  isHoliday
-} = require("../utils/leaveUtils");
+const { isWeeklyOff, getBetweenDates } = require("../utils/leaveUtils");
 
 /* ================= APPLY LEAVE ================= */
 exports.applyLeave = async (req, res) => {
   try {
-    const { fromDate, toDate, reason, leaveType } = req.body;
+    const { dates, reason, leaveType } = req.body;
+    const employeeId = req.user.userId;
+
+    if (!dates || dates.length === 0) {
+      return res.status(400).json({ message: "Leave dates required" });
+    }
 
     if (!leaveType) {
       return res.status(400).json({ message: "Leave type required" });
     }
 
-    const dates = getDateRange(fromDate, toDate);
+    // Remove duplicates & sort
+    const newDates = [...new Set(dates)].sort();
 
-    let totalDays = 0;
+    // Fetch existing pending / approved leaves
+    const pastLeaves = await Leave.find({
+      employee: employeeId,
+      status: { $in: ["Pending", "Approved"] }
+    });
+
+    // Combine dates to detect sandwich
+    const allDates = [
+      ...new Set([...newDates, ...pastLeaves.flatMap(l => l.dates)])
+    ].sort();
+
+    const isWorkingDay = (d) => !isWeeklyOff(d);
+
+    let totalDays = newDates.length;
     let isSandwich = false;
 
-    // Check sandwich (Fri + Mon)
-    const prev = new Date(fromDate);
-    prev.setDate(prev.getDate() - 1);
-    const next = new Date(toDate);
-    next.setDate(next.getDate() + 1);
+    for (let i = 0; i < allDates.length - 1; i++) {
+      let leaveCount = 1;
+      let weeklyOffCount = 0;
+      let endIndex = i;
 
-    const prevDate = prev.toISOString().split("T")[0];
-    const nextDate = next.toISOString().split("T")[0];
+      for (let j = i + 1; j < allDates.length; j++) {
+        const between = getBetweenDates(allDates[j - 1], allDates[j]);
 
-    if (
-      (isSunday(prevDate) || await isHoliday(prevDate)) &&
-      (isSunday(nextDate) || await isHoliday(nextDate))
-    ) {
-      isSandwich = true;
-    }
+        // If working day exists between → stop
+        if (between.some(d => isWorkingDay(d))) break;
 
-    if (isSandwich) {
-      totalDays = dates.length + 2; // Sat + Sun
-    } else {
-      // Exclude Sundays & holidays
-      for (let d of dates) {
-        if (!(isSunday(d) || await isHoliday(d))) {
-          totalDays++;
-        }
+        weeklyOffCount += between.filter(d => isWeeklyOff(d)).length;
+        leaveCount++;
+        endIndex = j;
+      }
+
+      const segmentDates = allDates.slice(i, endIndex + 1);
+      const involvesNewLeave = newDates.some(d =>
+        segmentDates.includes(d)
+      );
+
+      // Sandwich only if new leave is part of chain
+      if (leaveCount >= 2 && weeklyOffCount > 0 && involvesNewLeave) {
+        isSandwich = true;
+        totalDays = leaveCount + weeklyOffCount;
+        break;
       }
     }
 
+    const finalLeaveType = isSandwich ? "Sandwich" : leaveType;
+
     const leave = await Leave.create({
-      employee: req.user.userId,
-      fromDate,
-      toDate,
-      reason,
-      leaveType,
+      employee: employeeId,
+      dates: newDates,
       totalDays,
-      isSandwich
+      leaveType: finalLeaveType,
+      reason
     });
 
-    res.json({ message: "Leave applied", leave });
+    res.json({
+      message: "Leave applied successfully",
+      leave
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Leave apply failed" });
@@ -67,53 +88,82 @@ exports.applyLeave = async (req, res) => {
 
 /* ================= MANAGER VIEW ================= */
 exports.getManagerLeaves = async (req, res) => {
-  const manager = await Employee.findById(req.user.userId);
+  try {
+    const manager = await Employee.findById(req.user.userId);
 
-  if (!manager || manager.role !== "manager") {
-    return res.status(403).json({ message: "Access denied" });
+    if (!manager || manager.role !== "manager") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const employees = await Employee.find({
+      department: manager.department,
+      role: "employee"
+    }).select("_id");
+
+    const leaves = await Leave.find({
+      employee: { $in: employees.map(e => e._id) }
+    }).populate("employee", "name email department");
+
+    res.json(leaves);
+
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch leaves" });
   }
-
-  const employees = await Employee.find({
-    department: manager.department,
-    role: "employee"
-  }).select("_id");
-
-  const employeeIds = employees.map(e => e._id);
-
-  const leaves = await Leave.find({
-    employee: { $in: employeeIds }
-  }).populate("employee", "name email department");
-
-  res.json(leaves);
 };
 
 /* ================= APPROVE / REJECT ================= */
 exports.updateLeaveStatus = async (req, res) => {
-  const { leaveId } = req.params;
-  const { status } = req.body;
+  try {
+    const { leaveId } = req.params;
+    const { status } = req.body;
 
-  const leave = await Leave.findById(leaveId);
-  if (!leave) {
-    return res.status(404).json({ message: "Leave not found" });
+    const leave = await Leave.findById(leaveId);
+    if (!leave) {
+      return res.status(404).json({ message: "Leave not found" });
+    }
+
+    if (leave.status !== "Pending") {
+      return res.status(400).json({ message: "Leave already processed" });
+    }
+
+    if (status === "Approved") {
+      const employee = await Employee.findById(leave.employee);
+
+      const leaveKey =
+        leave.leaveType === "Sandwich"
+          ? "casual"
+          : leave.leaveType.toLowerCase();
+
+      if (employee.leaveBalance[leaveKey].remaining < leave.totalDays) {
+        return res.status(400).json({
+          message: "Insufficient leave balance"
+        });
+      }
+
+      // Deduct balance
+      employee.leaveBalance[leaveKey].used += leave.totalDays;
+      employee.leaveBalance[leaveKey].remaining -= leave.totalDays;
+      await employee.save();
+
+      // Mark attendance
+      await applyLeaveToAttendance(leave);
+    }
+
+    leave.status = status;
+    leave.approvedBy = req.user.userId;
+    await leave.save();
+
+    res.json({ message: `Leave ${status} successfully` });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update leave status" });
   }
-
-  leave.status = status;
-  leave.approvedBy = req.user.userId;
-  await leave.save();
-
-  if (status === "Approved") {
-    await applyLeaveToAttendance(leave);
-  }
-
-  res.json({ message: `Leave ${status}` });
 };
 
 /* ================= APPLY LEAVE TO ATTENDANCE ================= */
 const applyLeaveToAttendance = async (leave) => {
-  const dates = getDateRange(leave.fromDate, leave.toDate);
-
-  // Mark applied dates
-  for (let date of dates) {
+  for (const date of leave.dates) {
     await Attendance.findOneAndUpdate(
       { employee: leave.employee, date },
       {
@@ -124,29 +174,15 @@ const applyLeaveToAttendance = async (leave) => {
       { upsert: true }
     );
   }
-
-  // Sandwich weekend/holiday
-  if (leave.isSandwich) {
-    const prev = new Date(leave.fromDate);
-    prev.setDate(prev.getDate() - 1);
-    const next = new Date(leave.toDate);
-    next.setDate(next.getDate() + 1);
-
-    const extraDates = [
-      prev.toISOString().split("T")[0],
-      next.toISOString().split("T")[0]
-    ];
-
-    for (let date of extraDates) {
-      await Attendance.findOneAndUpdate(
-        { employee: leave.employee, date },
-        {
-          employee: leave.employee,
-          date,
-          status: "Leave"
-        },
-        { upsert: true }
-      );
-    }
-  }
 };
+
+
+/* ================= EMPLOYEE LEAVES ================= */
+exports.getMyLeaves = async (req, res) => {
+  const leaves = await Leave.find({
+    employee: req.user.userId
+  }).sort({ createdAt: -1 });
+
+  res.json(leaves);
+};
+

@@ -8,3 +8,6 @@ export const getManagerLeaves = () =>
 
 export const updateLeaveStatus = (leaveId, status) =>
   api.patch(`/api/leaves/${leaveId}`, { status });
+
+export const getMyLeaves = () =>
+  api.get("/api/leaves/me");

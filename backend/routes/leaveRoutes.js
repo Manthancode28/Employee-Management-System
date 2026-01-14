@@ -7,11 +7,21 @@ const authorize = require("../middleware/authorize");
 const {
   applyLeave,
   getManagerLeaves,
-  updateLeaveStatus
+  updateLeaveStatus,
+  getMyLeaves
 } = require("../controllers/leaveController");
 
-router.post("/", auth, authorize("employee"), applyLeave);
+/**
+ * Employee / Manager
+ */
+router.post(
+  "/",
+  auth,
+  authorize("employee", "manager"),
+  applyLeave
+);
 
+/* ================= MANAGER VIEW ================= */
 router.get(
   "/manager",
   auth,
@@ -19,6 +29,7 @@ router.get(
   getManagerLeaves
 );
 
+/* ================= APPROVE / REJECT ================= */
 router.patch(
   "/:leaveId",
   auth,
@@ -27,3 +38,10 @@ router.patch(
 );
 
 module.exports = router;
+
+router.get(
+  "/me",
+  auth,
+  authorize("employee"),
+  getMyLeaves
+);

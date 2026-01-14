@@ -65,24 +65,14 @@ const OrgEmployees = () => {
               )}
             </tr>
           </thead>
+
           <tbody>
             {employees.map(emp => (
-              <tr
-                key={emp._id}
-                className="border-t hover:bg-gray-50 transition"
-              >
-                <td className="px-6 py-4 font-medium">
-                  {emp.name}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  {emp.email}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  {emp.department}
-                </td>
-                <td className="px-6 py-4 text-center capitalize">
-                  {emp.role}
-                </td>
+              <tr key={emp._id} className="border-t hover:bg-gray-50">
+                <td className="px-6 py-4 font-medium">{emp.name}</td>
+                <td className="px-6 py-4 text-center">{emp.email}</td>
+                <td className="px-6 py-4 text-center">{emp.department}</td>
+                <td className="px-6 py-4 text-center capitalize">{emp.role}</td>
 
                 {role === "admin" && (
                   <td className="px-6 py-4 text-center">
@@ -91,7 +81,7 @@ const OrgEmployees = () => {
                       onChange={(e) =>
                         handleRoleChange(emp._id, e.target.value)
                       }
-                      className="border rounded-xl px-3 py-1 focus:ring-2 focus:ring-red-300"
+                      className="border rounded-xl px-3 py-1"
                     >
                       <option value="employee">Employee</option>
                       <option value="manager">Manager</option>

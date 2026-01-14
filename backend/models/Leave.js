@@ -8,35 +8,24 @@ const leaveSchema = new mongoose.Schema(
       required: true
     },
 
-    fromDate: {
-      type: String,
-      required: true
-    },
-
-    toDate: {
-      type: String,
+    dates: {
+      type: [String], // YYYY-MM-DD
       required: true
     },
 
     leaveType: {
       type: String,
-      enum: ["Casual", "Sick"],
+      enum: ["Casual", "Sick", "Sandwich"],
       required: true
     },
 
     totalDays: {
       type: Number,
-      default: 0
-    },
-
-    isSandwich: {
-      type: Boolean,
-      default: false
+      required: true
     },
 
     reason: {
-      type: String,
-      required: true
+      type: String
     },
 
     status: {
@@ -47,8 +36,7 @@ const leaveSchema = new mongoose.Schema(
 
     approvedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Employee",
-      default: null
+      ref: "Employee"
     }
   },
   { timestamps: true }

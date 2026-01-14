@@ -3,13 +3,15 @@ const router = express.Router();
 
 const auth = require("../middleware/auth");
 const authorize = require("../middleware/authorize");
+
 const {
   addEmployee,
-  getEmployees
+  getEmployees,
+  changeEmployeeRole,
+  getMyLeaveBalance
 } = require("../controllers/employeeController");
 
-const { changeEmployeeRole } = require("../controllers/employeeController");
-
+/* ================= ADD EMPLOYEE ================= */
 router.post(
   "/add",
   auth,
@@ -17,7 +19,7 @@ router.post(
   addEmployee
 );
 
-
+/* ================= GET EMPLOYEES ================= */
 router.get(
   "/",
   auth,
@@ -25,6 +27,7 @@ router.get(
   getEmployees
 );
 
+/* ================= CHANGE ROLE ================= */
 router.put(
   "/change-role",
   auth,
@@ -32,4 +35,10 @@ router.put(
   changeEmployeeRole
 );
 
+router.get(
+  "/me/leave-balance",
+  auth,
+  authorize("employee"),
+  getMyLeaveBalance
+);
 module.exports = router;
