@@ -1,9 +1,10 @@
 import { useState } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
-import AttendanceWidget from "../components/AttendanceWidget";
+import AttendanceWidget from "../components/attendance/AttendanceWidget";
 import EmployeeAttendanceTable from "../components/EmployeeAttendanceTable";
 import ApplyLeave from "../components/ApplyLeave";
 import EmployeeLeaveStatus from "../components/EmployeeLeaveStatus";
+import EmployeeRegularisationSection from "../components/EmployeeRegularisationSection";
 import StatCard from "../components/ui/StatCard";
 
 const EmployeeDashboard = () => {
@@ -21,11 +22,11 @@ const EmployeeDashboard = () => {
           Employee Dashboard
         </h1>
         <p className="text-gray-500 mt-1">
-          Attendance and leave overview
+          Attendance, leave & regularisation overview
         </p>
       </div>
 
-      {/* TOP */}
+      {/* TOP SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
         <AttendanceWidget />
 
@@ -36,16 +37,18 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* APPLY LEAVE */}
-      <ApplyLeave />
-
-      {/* LEAVE STATUS */}
-      <EmployeeLeaveStatus />
-
-      {/* ATTENDANCE TABLE */}
-      <section className="mt-14">
+      {/* ATTENDANCE TABLE (PRIMARY) */}
+      <section className="mt-12">
         <EmployeeAttendanceTable onSummaryChange={setSummary} />
       </section>
+
+      {/* REGULARISATION (COLLAPSIBLE) */}
+      <EmployeeRegularisationSection />
+
+      {/* LEAVE (SECONDARY) */}
+      <ApplyLeave />
+      <EmployeeLeaveStatus />
+
     </DashboardLayout>
   );
 };

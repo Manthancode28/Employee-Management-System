@@ -14,6 +14,10 @@ import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 import AddEmployee from "./components/AddEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import ApplyRegularisation from "./components/ApplyRegularisation";
+import ManagerRegularisationRequests from "./components/ManagerRegularisationRequests";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -59,6 +63,28 @@ function App() {
           element={
             <ProtectedRoute role="employee">
               <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+        {/* EMPLOYEE */}
+        <Route
+          path="/employee/regularisation"
+          element={
+            <ProtectedRoute role="employee">
+              <ApplyRegularisation />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* MANAGER */}
+        <Route
+          path="/manager/regularisation"
+          element={
+            <ProtectedRoute role="manager">
+              <ManagerRegularisationRequests />
             </ProtectedRoute>
           }
         />

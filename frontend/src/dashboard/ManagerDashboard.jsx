@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
-import AttendanceWidget from "../components/AttendanceWidget";
+import AttendanceWidget from "../components/attendance/AttendanceWidget";
 import StatCard from "../components/ui/StatCard";
 import ManagerAttendanceTable from "../components/ManagerAttendanceTable";
 import ManagerLeaveRequests from "../components/ManagerLeaveRequests";
+import ManagerRegularisationRequests from "../components/ManagerRegularisationRequests";
+
 
 const ManagerDashboard = () => {
   const [employees, setEmployees] = useState([]);
@@ -53,6 +55,12 @@ const ManagerDashboard = () => {
       <section className="mb-10">
         <ManagerLeaveRequests />
       </section>
+
+      {/* REGULARISATION REQUESTS */}
+    <section className="mb-10">
+      <ManagerRegularisationRequests />
+    </section>
+
     </DashboardLayout>
   );
 };

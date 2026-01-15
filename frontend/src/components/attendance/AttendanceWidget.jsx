@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../api/axios";
-import { getCurrentLocation } from "../utils/getLocation";
+import api from "../../api/axios";
+import { getCurrentLocation } from "../../utils/getLocation";
 import {
   ClockIcon,
   CheckCircleIcon,
