@@ -1,5 +1,6 @@
 const Employee = require("../models/Employee");
 const bcrypt = require("bcryptjs");
+const { applyLeavePolicyToEmployee } = require("../utils/applyLeavePolicyToEmployee");
 
 /* ================= ADD EMPLOYEE ================= */
 exports.addEmployee = async (req, res) => {
@@ -35,6 +36,8 @@ exports.addEmployee = async (req, res) => {
       managerId: role === "employee" ? managerId || null : null,
       organization: req.user.organizationId
     });
+
+    await applyLeavePolicyToEmployee(employee);
 
     res.status(201).json({
       message: `${role} added successfully`,

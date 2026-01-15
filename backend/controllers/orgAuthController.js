@@ -3,6 +3,7 @@ const Employee = require("../models/Employee");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 
+
 /* ================= REGISTER ORG ================= */
 exports.registerOrg = async (req, res) => {
   try {

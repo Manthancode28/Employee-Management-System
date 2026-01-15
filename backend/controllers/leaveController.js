@@ -117,6 +117,10 @@ exports.updateLeaveStatus = async (req, res) => {
     const { leaveId } = req.params;
     const { status } = req.body;
 
+    if (!["Approved", "Rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
     const leave = await Leave.findById(leaveId);
     if (!leave) {
       return res.status(404).json({ message: "Leave not found" });
@@ -129,6 +133,7 @@ exports.updateLeaveStatus = async (req, res) => {
     if (status === "Approved") {
       const employee = await Employee.findById(leave.employee);
 
+     
       const leaveKey =
         leave.leaveType === "Sandwich"
           ? "casual"
@@ -140,12 +145,10 @@ exports.updateLeaveStatus = async (req, res) => {
         });
       }
 
-      // Deduct balance
       employee.leaveBalance[leaveKey].used += leave.totalDays;
       employee.leaveBalance[leaveKey].remaining -= leave.totalDays;
-      await employee.save();
 
-      // Mark attendance
+      await employee.save();
       await applyLeaveToAttendance(leave);
     }
 
@@ -160,6 +163,7 @@ exports.updateLeaveStatus = async (req, res) => {
     res.status(500).json({ message: "Failed to update leave status" });
   }
 };
+
 
 /* ================= APPLY LEAVE TO ATTENDANCE ================= */
 const applyLeaveToAttendance = async (leave) => {

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import {
   applyRegularisation,
   getMyRegularisations
-} from "../api/regularisation";
-import StatusBadge from "./ui/StatusBadge";
+} from "../../api/regularisation";
+import StatusBadge from "../ui/StatusBadge";
 
 const EmployeeRegularisationSection = () => {
   const [open, setOpen] = useState(false);

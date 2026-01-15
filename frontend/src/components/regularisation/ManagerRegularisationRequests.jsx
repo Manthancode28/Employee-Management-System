@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import {
   getAllRegularisations,
   updateRegularisationStatus
-} from "../api/regularisation";
-import StatusBadge from "./ui/StatusBadge";
+} from "../../api/regularisation";
+import StatusBadge from "../ui/StatusBadge";
 
 const formatTime = (date) =>
   date ? new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "-";

@@ -14,8 +14,7 @@ import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 import AddEmployee from "./components/AddEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import ApplyRegularisation from "./components/ApplyRegularisation";
-import ManagerRegularisationRequests from "./components/ManagerRegularisationRequests";
+import ManagerRegularisationRequests from "./components/regularisation/ManagerRegularisationRequests";
 
 
 function App() {
@@ -67,17 +66,6 @@ function App() {
           }
         />
 
-
-
-        {/* EMPLOYEE */}
-        <Route
-          path="/employee/regularisation"
-          element={
-            <ProtectedRoute role="employee">
-              <ApplyRegularisation />
-            </ProtectedRoute>
-          }
-        />
 
         {/* MANAGER */}
         <Route

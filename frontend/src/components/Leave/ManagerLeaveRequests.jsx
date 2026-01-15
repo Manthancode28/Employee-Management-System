@@ -18,9 +18,13 @@ const ManagerLeaveRequests = () => {
 
   const handleAction = async (id, status) => {
     setProcessing(id);
-    await updateLeaveStatus(id, status);
-    setProcessing(null);
-    loadLeaves();
+    try {
+      await updateLeaveStatus(id, status);
+      loadLeaves();
+    } catch (err) {
+      alert(err.response?.data?.message || "Action failed");
+    }
+
   };
 
   if (leaves.length === 0) {

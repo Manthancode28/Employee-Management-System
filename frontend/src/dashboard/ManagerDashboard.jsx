@@ -6,7 +6,7 @@ import AttendanceWidget from "../components/attendance/AttendanceWidget";
 import StatCard from "../components/ui/StatCard";
 import ManagerAttendanceTable from "../components/attendance/ManagerAttendanceTable";
 import ManagerLeaveRequests from "../components/Leave/ManagerLeaveRequests";
-import ManagerRegularisationRequests from "../components/ManagerRegularisationRequests";
+import ManagerRegularisationRequests from "../components/regularisation/ManagerRegularisationRequests";
 
 
 const ManagerDashboard = () => {
