@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllAttendance } from "../api/attendance";
-import StatusBadge from "./ui/StatusBadge";
+import { getMyAttendance } from "../../api/attendance";
+import StatusBadge from "../ui/StatusBadge";
 
 const formatLateTime = (min) => {
   if (!min || min === 0) return "-";
@@ -8,7 +8,7 @@ const formatLateTime = (min) => {
   return `${Math.floor(min / 60)}h ${min % 60}m`;
 };
 
-const AdminAttendanceTable = () => {
+const EmployeeAttendanceTable = ({ onSummaryChange }) => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,24 +18,22 @@ const AdminAttendanceTable = () => {
   const [toDate, setToDate] = useState("");
 
   useEffect(() => {
-    getAllAttendance()
-      .then(res => setRecords(res.data))
+    getMyAttendance()
+      .then(res => {
+        setRecords(res.data);
+        onSummaryChange?.(res.data);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const filtered = records.filter(r => {
-    const matchName = r.employee?.name
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
-
-    const matchStatus =
-      status === "All" || r.status === status;
-
+    const matchSearch = r.date.includes(search);
+    const matchStatus = status === "All" || r.status === status;
     const matchDate =
       (!fromDate || r.date >= fromDate) &&
       (!toDate || r.date <= toDate);
 
-    return matchName && matchStatus && matchDate;
+    return matchSearch && matchStatus && matchDate;
   });
 
   if (loading) {
@@ -46,11 +44,19 @@ const AdminAttendanceTable = () => {
     );
   }
 
+  if (records.length === 0) {
+    return (
+      <div className="mt-10 text-center text-gray-500">
+        No attendance records found
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white mt-12 rounded-2xl shadow">
-      <div className="px-6 py-4 border-b bg-red-50">
-        <h2 className="text-lg font-semibold text-red-600">
-          Organization Attendance
+      <div className="p-5 border-b">
+        <h2 className="text-lg font-semibold text-gray-800">
+          My Attendance
         </h2>
       </div>
 
@@ -58,16 +64,16 @@ const AdminAttendanceTable = () => {
       <div className="p-5 flex flex-wrap gap-4 border-b">
         <input
           type="text"
-          placeholder="Search employee..."
+          placeholder="Search by date (YYYY-MM-DD)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border rounded-xl px-4 py-2"
+          className="border rounded-lg px-4 py-2"
         />
 
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="border rounded-xl px-4 py-2"
+          className="border rounded-lg px-4 py-2"
         >
           <option value="All">All Status</option>
           <option value="Present">Present</option>
@@ -75,20 +81,21 @@ const AdminAttendanceTable = () => {
           <option value="Leave">Leave</option>
           <option value="Absent">Absent</option>
           <option value="Holiday">Holiday</option>
+          <option value="WeeklyOff">Weekly Off</option>
         </select>
 
         <input
           type="date"
           value={fromDate}
           onChange={(e) => setFromDate(e.target.value)}
-          className="border rounded-xl px-3 py-2"
+          className="border rounded-lg px-3 py-2"
         />
 
         <input
           type="date"
           value={toDate}
           onChange={(e) => setToDate(e.target.value)}
-          className="border rounded-xl px-3 py-2"
+          className="border rounded-lg px-3 py-2"
         />
       </div>
 
@@ -97,10 +104,9 @@ const AdminAttendanceTable = () => {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
-              <th className="px-6 py-3 text-left">Employee</th>
-              <th className="px-6 py-3 text-center">Date</th>
+              <th className="px-6 py-3 text-left">Date</th>
               <th className="px-6 py-3 text-center">Status</th>
-              <th className="px-6 py-3 text-center">Work</th>
+              <th className="px-6 py-3 text-center">Work Type</th>
               <th className="px-6 py-3 text-center">Late</th>
               <th className="px-6 py-3 text-center">City</th>
             </tr>
@@ -114,13 +120,12 @@ const AdminAttendanceTable = () => {
                     ? "bg-yellow-50"
                     : r.status === "Leave"
                     ? "bg-blue-50"
+                    : r.status === "Absent"
+                    ? "bg-red-50"
                     : "hover:bg-gray-50"
                 }`}
               >
                 <td className="px-6 py-4 font-medium">
-                  {r.employee?.name || "-"}
-                </td>
-                <td className="px-6 py-4 text-center">
                   {r.date}
                 </td>
                 <td className="px-6 py-4 text-center">
@@ -144,4 +149,4 @@ const AdminAttendanceTable = () => {
   );
 };
 
-export default AdminAttendanceTable;
+export default EmployeeAttendanceTable;

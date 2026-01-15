@@ -4,7 +4,7 @@ import api from "../api/axios";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import StatCard from "../components/ui/StatCard";
 import OrgEmployees from "../pages/OrgEmployees";
-import AdminAttendanceTable from "../components/AdminAttendanceTable";
+import AdminAttendanceTable from "../components/attendance/AdminAttendanceTable";
 import { setLeavePolicy, applyLeavePolicy } from "../api/org";
 
 const AdminDashboard = () => {

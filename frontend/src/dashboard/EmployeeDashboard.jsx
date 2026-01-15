@@ -1,9 +1,9 @@
 import { useState } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/attendance/AttendanceWidget";
-import EmployeeAttendanceTable from "../components/EmployeeAttendanceTable";
-import ApplyLeave from "../components/ApplyLeave";
-import EmployeeLeaveStatus from "../components/EmployeeLeaveStatus";
+import EmployeeAttendanceTable from "../components/attendance/EmployeeAttendanceTable";
+import ApplyLeave from "../components/Leave/ApplyLeave";
+import EmployeeLeaveStatus from "../components/Leave/EmployeeLeaveStatus";
 import EmployeeRegularisationSection from "../components/EmployeeRegularisationSection";
 import StatCard from "../components/ui/StatCard";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getManagerAttendance } from "../api/attendance";
-import StatusBadge from "./ui/StatusBadge";
+import { getManagerAttendance } from "../../api/attendance";
+import StatusBadge from "../ui/StatusBadge";
 
 const formatLateTime = (min) => {
   if (!min || min === 0) return "-";

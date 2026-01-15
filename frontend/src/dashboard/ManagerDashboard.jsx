@@ -4,8 +4,8 @@ import api from "../api/axios";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/attendance/AttendanceWidget";
 import StatCard from "../components/ui/StatCard";
-import ManagerAttendanceTable from "../components/ManagerAttendanceTable";
-import ManagerLeaveRequests from "../components/ManagerLeaveRequests";
+import ManagerAttendanceTable from "../components/attendance/ManagerAttendanceTable";
+import ManagerLeaveRequests from "../components/Leave/ManagerLeaveRequests";
 import ManagerRegularisationRequests from "../components/ManagerRegularisationRequests";
 
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getMyLeaves } from "../api/leave";
-import { getMyLeaveBalance } from "../api/employee";
-import StatusBadge from "./ui/StatusBadge";
-import StatCard from "./ui/StatCard";
+import { getMyLeaves } from "../../api/leave";
+import { getMyLeaveBalance } from "../../api/employee";
+import StatusBadge from "../ui/StatusBadge";
+import StatCard from "../ui/StatCard";
 
 const EmployeeLeaveStatus = () => {
   const [leaves, setLeaves] = useState([]);

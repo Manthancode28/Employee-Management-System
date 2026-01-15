@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getManagerLeaves, updateLeaveStatus } from "../api/leave";
-import StatusBadge from "./ui/StatusBadge";
+import { getManagerLeaves, updateLeaveStatus } from "../../api/leave";
+import StatusBadge from "../ui/StatusBadge";
 
 const ManagerLeaveRequests = () => {
   const [leaves, setLeaves] = useState([]);

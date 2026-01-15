@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { applyLeave } from "../api/leave";
+import { applyLeave } from "../../api/leave";
 
 const ApplyLeave = () => {
   const [selectedDates, setSelectedDates] = useState([]);
