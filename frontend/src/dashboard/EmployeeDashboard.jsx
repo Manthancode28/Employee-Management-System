@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
 import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/attendance/AttendanceWidget";
 import EmployeeAttendanceTable from "../components/attendance/EmployeeAttendanceTable";
@@ -6,6 +8,7 @@ import ApplyLeave from "../components/Leave/ApplyLeave";
 import EmployeeLeaveStatus from "../components/Leave/EmployeeLeaveStatus";
 import EmployeeRegularisationSection from "../components/regularisation/EmployeeRegularisationSection";
 import StatCard from "../components/ui/StatCard";
+import EventsWidget from "../components/events/EventsWidget";
 
 const EmployeeDashboard = () => {
   const [summary, setSummary] = useState([]);
@@ -16,6 +19,7 @@ const EmployeeDashboard = () => {
 
   return (
     <DashboardLayout>
+
       {/* HEADER */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -24,6 +28,23 @@ const EmployeeDashboard = () => {
         <p className="text-gray-500 mt-1">
           Attendance, leave & regularisation overview
         </p>
+      </div>
+
+      {/* EVENTS (VIEW ONLY) */}
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Office Events</h2>
+
+          {/* Employees can only VIEW */}
+          <Link
+            to="/events"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            View Events
+          </Link>
+        </div>
+
+        <EventsWidget />
       </div>
 
       {/* TOP SECTION */}
@@ -37,15 +58,15 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* ATTENDANCE TABLE (PRIMARY) */}
+      {/* ATTENDANCE TABLE */}
       <section className="mt-12">
         <EmployeeAttendanceTable onSummaryChange={setSummary} />
       </section>
 
-      {/* REGULARISATION (COLLAPSIBLE) */}
+      {/* REGULARISATION */}
       <EmployeeRegularisationSection />
 
-      {/* LEAVE (SECONDARY) */}
+      {/* LEAVE */}
       <ApplyLeave />
       <EmployeeLeaveStatus />
 

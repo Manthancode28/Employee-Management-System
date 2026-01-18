@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { Link } from "react-router-dom";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import StatCard from "../components/ui/StatCard";
 import OrgEmployees from "../pages/OrgEmployees";
 import AdminAttendanceTable from "../components/attendance/AdminAttendanceTable";
+import EventsWidget from "../components/events/EventsWidget";
+
 import { setLeavePolicy, applyLeavePolicy } from "../api/org";
 
 const AdminDashboard = () => {
@@ -21,7 +24,6 @@ const AdminDashboard = () => {
   const managers = employees.filter(e => e.role === "manager").length;
   const staff = employees.filter(e => e.role === "employee").length;
 
-  /* 🔥 SET LEAVE POLICY */
   const handleApplyLeavePolicy = async () => {
     await setLeavePolicy({
       period,
@@ -30,14 +32,15 @@ const AdminDashboard = () => {
     });
 
     await applyLeavePolicy();
-
     alert("Leave policy applied to all employees");
+
     setCasual("");
     setSick("");
   };
 
   return (
     <DashboardLayout>
+
       {/* HEADER */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -55,7 +58,34 @@ const AdminDashboard = () => {
         <StatCard title="Employees" value={staff} />
       </div>
 
-      {/* 🔥 LEAVE POLICY */}
+      {/* EVENTS */}
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Office Events</h2>
+
+          <div className="flex gap-3">
+            {/* View Events */}
+            <Link
+              to="/events"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              View Events
+            </Link>
+
+            {/* Add Event */}
+            <Link
+              to="/events"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg text-sm font-medium"
+            >
+              Add Event
+            </Link>
+          </div>
+        </div>
+
+        <EventsWidget />
+      </div>
+
+      {/* LEAVE POLICY */}
       <div className="bg-white rounded-2xl shadow p-6 mb-12">
         <h2 className="text-lg font-semibold mb-4">
           Leave Policy (Organization Level)
@@ -105,6 +135,7 @@ const AdminDashboard = () => {
       <section>
         <OrgEmployees />
       </section>
+
     </DashboardLayout>
   );
 };

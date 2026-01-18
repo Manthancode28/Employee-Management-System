@@ -10,12 +10,13 @@ import AdminDashboard from "./dashboard/AdminDashboard";
 import ManagerDashboard from "./dashboard/ManagerDashboard";
 import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 
+// Pages
+import Events from "./pages/Events";
+
 // Components
 import AddEmployee from "./components/AddEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import ManagerRegularisationRequests from "./components/regularisation/ManagerRegularisationRequests";
-
 
 function App() {
   return (
@@ -56,6 +57,15 @@ function App() {
           }
         />
 
+        <Route
+          path="/manager/regularisation"
+          element={
+            <ProtectedRoute role="manager">
+              <ManagerRegularisationRequests />
+            </ProtectedRoute>
+          }
+        />
+
         {/* EMPLOYEE */}
         <Route
           path="/employee/dashboard"
@@ -66,13 +76,12 @@ function App() {
           }
         />
 
-
-        {/* MANAGER */}
+        {/* EVENTS (ADMIN / MANAGER / EMPLOYEE) */}
         <Route
-          path="/manager/regularisation"
+          path="/events"
           element={
-            <ProtectedRoute role="manager">
-              <ManagerRegularisationRequests />
+            <ProtectedRoute>
+              <Events />
             </ProtectedRoute>
           }
         />

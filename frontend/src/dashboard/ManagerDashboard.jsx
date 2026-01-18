@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { Link } from "react-router-dom";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import AttendanceWidget from "../components/attendance/AttendanceWidget";
@@ -7,17 +8,10 @@ import StatCard from "../components/ui/StatCard";
 import ManagerAttendanceTable from "../components/attendance/ManagerAttendanceTable";
 import ManagerLeaveRequests from "../components/Leave/ManagerLeaveRequests";
 import ManagerRegularisationRequests from "../components/regularisation/ManagerRegularisationRequests";
-
+import EventsWidget from "../components/events/EventsWidget";
 
 const ManagerDashboard = () => {
-  const [employees, setEmployees] = useState([]);
   const [summary, setSummary] = useState([]);
-
-  useEffect(() => {
-    api.get("/api/employees").then((res) => {
-      setEmployees(res.data);
-    });
-  }, []);
 
   const present = summary.filter(r => r.status === "Present").length;
   const late = summary.filter(r => r.status === "Late").length;
@@ -25,6 +19,7 @@ const ManagerDashboard = () => {
 
   return (
     <DashboardLayout>
+
       {/* HEADER */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -35,7 +30,34 @@ const ManagerDashboard = () => {
         </p>
       </div>
 
-      {/* TOP SECTION */}
+      {/* EVENTS */}
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Office Events</h2>
+
+          <div className="flex gap-3">
+            {/* View Events */}
+            <Link
+              to="/events"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              View Events
+            </Link>
+
+            {/* Add Event */}
+            <Link
+              to="/events"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg text-sm font-medium"
+            >
+              Add Event
+            </Link>
+          </div>
+        </div>
+
+        <EventsWidget />
+      </div>
+
+      {/* TOP STATS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
         <AttendanceWidget />
 
@@ -57,9 +79,9 @@ const ManagerDashboard = () => {
       </section>
 
       {/* REGULARISATION REQUESTS */}
-    <section className="mb-10">
-      <ManagerRegularisationRequests />
-    </section>
+      <section className="mb-10">
+        <ManagerRegularisationRequests />
+      </section>
 
     </DashboardLayout>
   );
