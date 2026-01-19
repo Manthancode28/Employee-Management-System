@@ -12,11 +12,15 @@ import EmployeeDashboard from "./dashboard/EmployeeDashboard";
 
 // Pages
 import Events from "./pages/Events";
+import OrgEmployees from "./pages/OrgEmployees";
 
 // Components
 import AddEmployee from "./components/AddEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ManagerRegularisationRequests from "./components/regularisation/ManagerRegularisationRequests";
+
+// Admin pages (NEW)
+import AdminLeavePolicy from "./pages/AdminLeavePolicy"; // create this page
 
 function App() {
   return (
@@ -34,6 +38,33 @@ function App() {
           element={
             <ProtectedRoute role="admin">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/employees"
+          element={
+            <ProtectedRoute role="admin">
+              <OrgEmployees />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedRoute role="admin">
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/leave-policy"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminLeavePolicy />
             </ProtectedRoute>
           }
         />
@@ -66,6 +97,15 @@ function App() {
           }
         />
 
+        <Route
+          path="/manager/events"
+          element={
+            <ProtectedRoute role="manager">
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+
         {/* EMPLOYEE */}
         <Route
           path="/employee/dashboard"
@@ -76,11 +116,10 @@ function App() {
           }
         />
 
-        {/* EVENTS (ADMIN / MANAGER / EMPLOYEE) */}
         <Route
-          path="/events"
+          path="/employee/events"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="employee">
               <Events />
             </ProtectedRoute>
           }
