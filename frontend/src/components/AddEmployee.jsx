@@ -7,7 +7,8 @@ const AddEmployee = () => {
     name: "",
     email: "",
     department: "",
-    role: ""
+    role: "",
+    dateOfJoining: ""
   });
 
   const [error, setError] = useState("");
@@ -22,7 +23,10 @@ const AddEmployee = () => {
   ];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -44,14 +48,15 @@ const AddEmployee = () => {
     !formData.name ||
     !formData.email ||
     !formData.department ||
-    !formData.role;
+    !formData.role ||
+    !formData.dateOfJoining;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 via-white to-gray-100 px-4">
       <div className="w-full max-w-md rounded-3xl bg-white/80 backdrop-blur-lg shadow-2xl p-8">
 
         <h2 className="text-3xl font-extrabold text-center text-red-500 mb-4">
-          Add User
+          Add Employee
         </h2>
 
         {error && (
@@ -78,6 +83,15 @@ const AddEmployee = () => {
             name="email"
             placeholder="Email Address"
             value={formData.email}
+            onChange={handleChange}
+            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
+          />
+
+          {/* DATE OF JOINING */}
+          <input
+            type="date"
+            name="dateOfJoining"
+            value={formData.dateOfJoining}
             onChange={handleChange}
             className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
           />
@@ -112,6 +126,11 @@ const AddEmployee = () => {
             ))}
           </select>
 
+          {/* INFO */}
+          <p className="text-xs text-gray-500 text-center">
+            ℹ️ Probation period will start automatically from Date of Joining
+          </p>
+
           {/* BUTTON */}
           <button
             type="submit"
@@ -124,7 +143,7 @@ const AddEmployee = () => {
               }
               transition-all duration-300`}
           >
-            {loading ? "Adding User..." : "Add User"}
+            {loading ? "Adding Employee..." : "Add Employee"}
           </button>
         </form>
       </div>

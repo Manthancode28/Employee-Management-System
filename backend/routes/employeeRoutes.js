@@ -7,6 +7,9 @@ const authorize = require("../middleware/authorize");
 const {
   addEmployee,
   getEmployees,
+  getProbationEmployees,
+  confirmProbation,
+  extendProbation,
   changeEmployeeRole,
   getMyLeaveBalance
 } = require("../controllers/employeeController");
@@ -27,6 +30,30 @@ router.get(
   getEmployees
 );
 
+/* ================= GET PROBATION EMPLOYEES ================= */
+router.get(
+  "/probation",
+  auth,
+  authorize("admin", "manager"),
+  getProbationEmployees
+);
+
+/* ================= CONFIRM PROBATION ================= */
+router.put(
+  "/:employeeId/confirm-probation",
+  auth,
+  authorize("admin", "manager"),
+  confirmProbation
+);
+
+/* ================= EXTEND PROBATION ================= */
+router.put(
+  "/:employeeId/extend-probation",
+  auth,
+  authorize("admin", "manager"),
+  extendProbation
+);
+
 /* ================= CHANGE ROLE ================= */
 router.put(
   "/change-role",
@@ -35,10 +62,12 @@ router.put(
   changeEmployeeRole
 );
 
+/* ================= MY LEAVE BALANCE ================= */
 router.get(
   "/me/leave-balance",
   auth,
   authorize("employee"),
   getMyLeaveBalance
 );
+
 module.exports = router;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
+/* ================= BADGES ================= */
 const roleBadge = (role) => {
   const base = "px-3 py-1 rounded-full text-xs font-semibold";
   if (role === "admin") return `${base} bg-red-100 text-red-600`;
@@ -9,6 +10,18 @@ const roleBadge = (role) => {
   return `${base} bg-gray-100 text-gray-700`;
 };
 
+const probationBadge = (status) => {
+  const base = "px-3 py-1 rounded-full text-xs font-semibold";
+  if (status === "ON_PROBATION")
+    return `${base} bg-yellow-100 text-yellow-700`;
+  if (status === "CONFIRMED")
+    return `${base} bg-green-100 text-green-700`;
+  if (status === "EXTENDED")
+    return `${base} bg-orange-100 text-orange-700`;
+  return `${base} bg-gray-100 text-gray-600`;
+};
+
+/* ================= COMPONENT ================= */
 const OrgEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +45,22 @@ const OrgEmployees = () => {
     await api.put("/api/employees/change-role", {
       employeeId: id,
       newRole
+    });
+    fetchEmployees();
+  };
+
+  const confirmProbation = async (id) => {
+    if (!window.confirm("Confirm probation for this employee?")) return;
+    await api.put(`/api/employees/${id}/confirm-probation`);
+    fetchEmployees();
+  };
+
+  const extendProbation = async (id) => {
+    const months = prompt("Extend probation by how many months?");
+    if (!months) return;
+
+    await api.put(`/api/employees/${id}/extend-probation`, {
+      extraMonths: Number(months)
     });
     fetchEmployees();
   };
@@ -109,8 +138,9 @@ const OrgEmployees = () => {
               <th className="px-6 py-3">Email</th>
               <th className="px-6 py-3">Department</th>
               <th className="px-6 py-3">Role</th>
-              {role === "admin" && (
-                <th className="px-6 py-3">Change Role</th>
+              <th className="px-6 py-3">Probation</th>
+              {(role === "admin" || role === "manager") && (
+                <th className="px-6 py-3">Actions</th>
               )}
             </tr>
           </thead>
@@ -119,7 +149,7 @@ const OrgEmployees = () => {
             {filteredEmployees.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-6 py-10 text-center text-gray-500"
                 >
                   No employees found
@@ -132,17 +162,9 @@ const OrgEmployees = () => {
                 key={emp._id}
                 className="border-t hover:bg-gray-50 transition"
               >
-                <td className="px-6 py-4 font-medium">
-                  {emp.name}
-                </td>
-
-                <td className="px-6 py-4 text-center">
-                  {emp.email}
-                </td>
-
-                <td className="px-6 py-4 text-center">
-                  {emp.department}
-                </td>
+                <td className="px-6 py-4 font-medium">{emp.name}</td>
+                <td className="px-6 py-4 text-center">{emp.email}</td>
+                <td className="px-6 py-4 text-center">{emp.department}</td>
 
                 <td className="px-6 py-4 text-center">
                   <span className={roleBadge(emp.role)}>
@@ -150,18 +172,44 @@ const OrgEmployees = () => {
                   </span>
                 </td>
 
-                {role === "admin" && (
-                  <td className="px-6 py-4 text-center">
-                    <select
-                      value={emp.role}
-                      onChange={(e) =>
-                        handleRoleChange(emp._id, e.target.value)
-                      }
-                      className="border rounded-xl px-3 py-1"
-                    >
-                      <option value="employee">Employee</option>
-                      <option value="manager">Manager</option>
-                    </select>
+                <td className="px-6 py-4 text-center">
+                  {emp.probation ? (
+                    <div className="flex flex-col items-center gap-1">
+                      <span className={probationBadge(emp.probation.status)}>
+                        {emp.probation.status.replace("_", " ")}
+                      </span>
+                      {emp.probation.endDate && (
+                        <span className="text-xs text-gray-500">
+                          Ends:{" "}
+                          {new Date(emp.probation.endDate)
+                            .toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+
+                {(role === "admin" || role === "manager") && (
+                  <td className="px-6 py-4 text-center space-x-2">
+                    {emp.probation?.isOnProbation && (
+                      <>
+                        <button
+                          onClick={() => confirmProbation(emp._id)}
+                          className="text-green-600 hover:underline text-sm"
+                        >
+                          Confirm
+                        </button>
+
+                        <button
+                          onClick={() => extendProbation(emp._id)}
+                          className="text-orange-600 hover:underline text-sm"
+                        >
+                          Extend
+                        </button>
+                      </>
+                    )}
                   </td>
                 )}
               </tr>
