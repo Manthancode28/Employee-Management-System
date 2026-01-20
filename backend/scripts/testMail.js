@@ -3,7 +3,7 @@ const sendEmail = require("../utils/mailer");
 
 (async () => {
   await sendEmail({
-    to: "manthan.nimon28@gmail.com",
+    to: "Manthan@creativewebsolution.in",
     subject: "Nodemailer Test",
     html: "<h3>Email system working successfully ✅</h3>"
   });

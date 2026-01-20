@@ -1,27 +1,36 @@
+import { useState } from "react";
 import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 
 const DashboardLayout = ({ children }) => {
   const role = localStorage.getItem("role");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
 
-      {/* TOP BAR */}
-      <div className="sticky top-0 z-50">
-        <Topbar />
-      </div>
+      {/* TOPBAR */}
+      <Topbar onMenuClick={() => setSidebarOpen(true)} />
 
-      {/* BODY */}
       <div className="flex">
 
-        {/* SIDEBAR (Admin only for now) */}
+        {/* SIDEBAR */}
         {role === "admin" && (
-          <Sidebar />
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
         )}
 
         {/* MAIN CONTENT */}
-        <main className="flex-1 px-8 py-6 overflow-y-auto">
+        <main
+          className="
+            flex-1
+            px-4 sm:px-6 lg:px-8
+            py-6
+            transition-all
+          "
+        >
           {children}
         </main>
 
