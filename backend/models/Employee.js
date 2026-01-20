@@ -40,7 +40,6 @@ const probationSchema = new mongoose.Schema(
   { _id: false }
 );
 
-/* ================= EMPLOYEE SCHEMA ================= */
 const employeeSchema = new mongoose.Schema(
   {
     name: {
@@ -82,10 +81,24 @@ const employeeSchema = new mongoose.Schema(
       required: true
     },
 
-    /* ================= DATE OF JOINING ================= */
+    /* ================= IMPORTANT DATES ================= */
+
+    // Date employee joined the organization
     dateOfJoining: {
       type: Date,
       required: true
+    },
+
+    // 🎂 Date of Birth (used for birthday emails)
+    dateOfBirth: {
+      type: Date,
+      required: true
+    },
+
+    // 🛑 Prevent duplicate birthday emails in same year
+    birthdayMailLastSentYear: {
+      type: Number,
+      default: null
     },
 
     /* ================= PROBATION DETAILS ================= */

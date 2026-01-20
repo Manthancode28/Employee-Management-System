@@ -7,15 +7,23 @@ export const getAllEmployees = () =>
 export const getProbationEmployees = () =>
   api.get("/api/employees/probation");
 
-/* ================= PROBATION ACTIONS ================= */
-export const confirmProbation = (employeeId) =>
-  api.put(`/api/employees/${employeeId}/confirm-probation`);
 
+/* ================= PROBATION ACTIONS ================= */
+
+// 🔹 NEW: confirm probation + send email
+export const completeProbation = (employeeId) =>
+  api.post(`/api/probation/complete/${employeeId}`);
+
+// existing
 export const extendProbation = (employeeId, extraMonths) =>
   api.put(`/api/employees/${employeeId}/extend-probation`, {
     extraMonths
   });
 
+
 /* ================= LEAVE ================= */
 export const getMyLeaveBalance = () =>
   api.get("/api/employees/me/leave-balance");
+
+
+

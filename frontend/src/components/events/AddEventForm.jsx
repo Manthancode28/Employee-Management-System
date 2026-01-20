@@ -80,7 +80,7 @@ function AddEventForm({ onEventAdded, pageMode = false }) {
             </button>
           )}
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-semibold">
+          <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-semibold">
             Add Event
           </button>
         </div>

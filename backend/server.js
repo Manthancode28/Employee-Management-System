@@ -4,8 +4,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 
-const app = express();
+require("./scripts/emailCron");
 
+const app = express();
 
 app.use(cors());
 app.use(express.json());
@@ -20,6 +21,8 @@ app.use("/api/leaves", require("./routes/leaveRoutes"));
 app.use("/api/regularisation", require("./routes/regularisationRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 
+// 🖱 ADMIN PROBATION ACTION
+app.use("/api/probation", require("./routes/probationRoutes"));
 
 mongoose
   .connect(process.env.MONGO_URI)

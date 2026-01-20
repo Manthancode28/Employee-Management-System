@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { completeProbation } from "../api/employee";
+
 
 /* ================= BADGES ================= */
 const roleBadge = (role) => {
@@ -49,11 +51,23 @@ const OrgEmployees = () => {
     fetchEmployees();
   };
 
+ 
   const confirmProbation = async (id) => {
-    if (!window.confirm("Confirm probation for this employee?")) return;
-    await api.put(`/api/employees/${id}/confirm-probation`);
-    fetchEmployees();
+    if (!window.confirm("Confirm probation and send email to employee?")) return;
+
+    try {
+      await completeProbation(id);
+
+      alert("Probation confirmed and email sent successfully 📧");
+      fetchEmployees();
+    } catch (err) {
+      alert(
+        err.response?.data?.message ||
+          "Failed to confirm probation"
+      );
+    }
   };
+
 
   const extendProbation = async (id) => {
     const months = prompt("Extend probation by how many months?");

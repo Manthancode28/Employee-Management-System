@@ -15,11 +15,21 @@ exports.addEmployee = async (req, res) => {
       department,
       role,
       managerId,
-      dateOfJoining
+      dateOfJoining,
+      dateOfBirth              // ✅ NEW
     } = req.body;
 
-    if (!name || !email || !department || !role || !dateOfJoining) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (
+      !name ||
+      !email ||
+      !department ||
+      !role ||
+      !dateOfJoining ||
+      !dateOfBirth
+    ) {
+      return res.status(400).json({
+        message: "All fields including date of birth are required"
+      });
     }
 
     if (!["manager", "employee"].includes(role)) {
@@ -39,7 +49,9 @@ exports.addEmployee = async (req, res) => {
     const probationMonths = 6;
 
     const probationEndDate = new Date(joiningDate);
-    probationEndDate.setMonth(probationEndDate.getMonth() + probationMonths);
+    probationEndDate.setMonth(
+      probationEndDate.getMonth() + probationMonths
+    );
 
     /* ================= CREATE EMPLOYEE ================= */
     const employee = await Employee.create({
@@ -52,6 +64,9 @@ exports.addEmployee = async (req, res) => {
       organization: req.user.organizationId,
 
       dateOfJoining: joiningDate,
+
+      // 🎂 DOB for birthday emails
+      dateOfBirth: new Date(dateOfBirth),
 
       probation: {
         isOnProbation: true,
@@ -88,8 +103,7 @@ exports.getEmployees = async (req, res) => {
       filter.role = "employee";
     }
 
-    const employees = await Employee
-      .find(filter)
+    const employees = await Employee.find(filter)
       .select("-password")
       .sort({ createdAt: -1 });
 
@@ -229,6 +243,8 @@ exports.getMyLeaveBalance = async (req, res) => {
     res.json(employee.leaveBalance);
 
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch leave balance" });
+    res.status(500).json({
+      message: "Failed to fetch leave balance"
+    });
   }
 };

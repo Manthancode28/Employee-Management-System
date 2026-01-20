@@ -61,6 +61,15 @@ function App() {
         />
 
         <Route
+          path="/manager/events"
+          element={
+            <ProtectedRoute role="manager">
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin/leave-policy"
           element={
             <ProtectedRoute role="admin">

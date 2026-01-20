@@ -80,11 +80,12 @@ function Events() {
                 onClick={() => setEditingEvent(event)}
                 style={{
                   marginRight: 10,
-                  background: "#2563eb",
+                  background: "red",
                   color: "#fff",
                   padding: "4px 10px",
-                  borderRadius: 4
+                  borderRadius: 4,
                 }}
+                className="hover:bg-red-600 hover:cursor-pointer"
               >
                 Edit
               </button>

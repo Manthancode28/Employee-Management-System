@@ -38,16 +38,16 @@ const ManagerDashboard = () => {
           <div className="flex gap-3">
             {/* View Events */}
             <Link
-              to="/events"
-              className="text-blue-600 hover:underline font-medium"
+              to="/manager/events"
+              className="text-red-600 hover:underline font-medium"
             >
               View Events
             </Link>
 
             {/* Add Event */}
             <Link
-              to="/events"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg text-sm font-medium"
+              to="/manager/events"
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg text-sm font-medium"
             >
               Add Event
             </Link>

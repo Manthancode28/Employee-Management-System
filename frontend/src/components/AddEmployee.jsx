@@ -8,7 +8,8 @@ const AddEmployee = () => {
     email: "",
     department: "",
     role: "",
-    dateOfJoining: ""
+    dateOfJoining: "",
+    dateOfBirth: ""
   });
 
   const [error, setError] = useState("");
@@ -49,13 +50,14 @@ const AddEmployee = () => {
     !formData.email ||
     !formData.department ||
     !formData.role ||
-    !formData.dateOfJoining;
+    !formData.dateOfJoining ||
+    !formData.dateOfBirth;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-100 via-white to-gray-100 px-4">
       <div className="w-full max-w-md rounded-3xl bg-white/80 backdrop-blur-lg shadow-2xl p-8">
 
-        <h2 className="text-3xl font-extrabold text-center text-red-500 mb-4">
+        <h2 className="text-3xl font-extrabold text-center text-red-500 mb-6">
           Add Employee
         </h2>
 
@@ -67,68 +69,107 @@ const AddEmployee = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
-          {/* NAME */}
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
-          />
+          {/* FULL NAME */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter full name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
+            />
+          </div>
 
           {/* EMAIL */}
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email address"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
+            />
+          </div>
+
+          {/* DATE OF BIRTH */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
+            />
+          </div>
 
           {/* DATE OF JOINING */}
-          <input
-            type="date"
-            name="dateOfJoining"
-            value={formData.dateOfJoining}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Joining
+            </label>
+            <input
+              type="date"
+              name="dateOfJoining"
+              value={formData.dateOfJoining}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none"
+            />
+          </div>
 
           {/* DEPARTMENT */}
-          <select
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none bg-white"
-          >
-            <option value="">Select Department</option>
-            {departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Department
+            </label>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none bg-white"
+            >
+              <option value="">Select department</option>
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* ROLE */}
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none bg-white"
-          >
-            <option value="">Select Role</option>
-            {roles.map((r) => (
-              <option key={r.value} value={r.value}>
-                {r.label}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-red-300 outline-none bg-white"
+            >
+              <option value="">Select role</option>
+              {roles.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* INFO */}
           <p className="text-xs text-gray-500 text-center">
-            ℹ️ Probation period will start automatically from Date of Joining
+            ℹ️ Probation starts from Date of Joining. Birthday wishes are sent automatically 🎂
           </p>
 
           {/* BUTTON */}
@@ -145,6 +186,7 @@ const AddEmployee = () => {
           >
             {loading ? "Adding Employee..." : "Add Employee"}
           </button>
+
         </form>
       </div>
     </div>

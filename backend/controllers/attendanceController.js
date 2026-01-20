@@ -3,7 +3,7 @@ const Employee = require("../models/Employee");
 const Holiday = require("../models/Holiday");
 const getCityFromLatLng = require("../utils/getCityFromLatLng");
 
-/* ================= CONFIG ================= */
+
 const OFFICE_LATE_TIME_HOUR = 9;
 const OFFICE_LATE_TIME_MIN = 15;
 
@@ -21,7 +21,7 @@ const getLateMinutes = (checkInTime) => {
     : Math.floor((checkInTime - officeTime) / 60000);
 };
 
-/* ================= CHECK-IN ================= */
+
 exports.checkIn = async (req, res) => {
   try {
     const { workType, location } = req.body;
@@ -76,7 +76,7 @@ exports.checkIn = async (req, res) => {
   }
 };
 
-/* ================= CHECK-OUT ================= */
+
 exports.checkOut = async (req, res) => {
   try {
     const today = todayDate();
@@ -110,7 +110,7 @@ exports.checkOut = async (req, res) => {
   }
 };
 
-/* ================= VIEWS ================= */
+
 exports.getMyAttendance = async (req, res) => {
   const data = await Attendance.find({ employee: req.user.userId })
     .sort({ date: -1 });
