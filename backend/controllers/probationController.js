@@ -11,6 +11,7 @@ exports.completeProbationManually = async (req, res) => {
     if (employee.probation.status === "CONFIRMED")
       return res.status(400).json({ message: "Probation already completed" });
 
+    // 🔴 THIS IS WHERE IT FAILS
     await sendEmail({
       to: employee.email,
       subject: "Probation Completed 🎉",
@@ -28,7 +29,11 @@ exports.completeProbationManually = async (req, res) => {
     await employee.save();
 
     res.json({ message: "Probation completed and email sent" });
+
   } catch (err) {
-    res.status(500).json({ message: "Failed to complete probation" });
+    console.error("COMPLETE PROBATION ERROR:", err); // 👈 ADD THIS
+    res.status(500).json({
+      message: err.message || "Failed to complete probation"
+    });
   }
 };

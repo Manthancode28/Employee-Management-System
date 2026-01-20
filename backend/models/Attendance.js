@@ -9,7 +9,7 @@ const attendanceSchema = new mongoose.Schema(
     },
 
     date: {
-      type: String, // YYYY-MM-DD
+      type: String, 
       required: true
     },
 
@@ -37,7 +37,7 @@ const attendanceSchema = new mongoose.Schema(
       city: String,
     },
 
-    // 🔥 NEW FIELDS
+    //  NEW FIELDS
     status: {
       type: String,
       enum: [
@@ -58,6 +58,7 @@ const attendanceSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 attendanceSchema.index({ employee: 1,  date: 1 }, { unique: true });
 

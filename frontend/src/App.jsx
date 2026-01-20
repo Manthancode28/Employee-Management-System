@@ -115,6 +115,15 @@ function App() {
           }
         />
 
+          <Route
+          path="/employee/events"
+          element={
+            <ProtectedRoute role="employee">
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+
         {/* EMPLOYEE */}
         <Route
           path="/employee/dashboard"

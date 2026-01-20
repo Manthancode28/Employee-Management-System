@@ -37,7 +37,7 @@ const EmployeeDashboard = () => {
 
           {/* Employees can only VIEW */}
           <Link
-            to="/events"
+            to="/employee/events"
             className="text-blue-600 hover:underline font-medium"
           >
             View Events
